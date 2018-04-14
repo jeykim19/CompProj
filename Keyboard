@@ -105,11 +105,10 @@ class Runner implements Runnable{
      
     
 public static void main(String[] args){     //needs to be added into main class
-	JFrame frame = new JFrame("Physics!!!");
+	JFrame frame = new JFrame("Space Adventure");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	Keyboard mainInstance = new Keyboard();
 	frame.setContentPane(mainInstance);
 	frame.pack();
 	frame.setVisible(true);
     }
-
