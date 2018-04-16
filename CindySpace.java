@@ -4,11 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Dimension;
 import java.util.Random;
-import java.awt.event.KeyListener;
-import java.awt.event.KeyEvent;
 import java.lang.Math;
-import java.util.Timer;
-import java.util.TimerTask;
 
 class Pair{
   public double x;
@@ -54,6 +50,8 @@ int margin;
         width = initWidth;
         height = initHeight;
     Random rand = new Random();
+
+    // the postion of a sphere is its center
   position = new Pair(rand.nextDouble()*width + margin,0.0);
 
   }
@@ -128,7 +126,7 @@ class Asteroid extends Sphere {
 }
 
 class Planet extends Sphere{
-  double radius = 70;
+  double radius = 170;
   public Planet(int initWidth, int initHeight,int initMargin, int initDiff){
     super(initWidth, initHeight, initMargin, initDiff);
     super.velocity = new Pair(0.0, (double)diff*50);
@@ -170,6 +168,7 @@ Pair acceleration;
     {
       asteroids[i] = new Asteroid(width, height, margin, diff);
     }
+
     planet = new Planet(width, height, margin, diff);
 
   }
@@ -179,7 +178,11 @@ Pair acceleration;
       asteroids[i].draw(g);
 
     }
-    planet.draw(g);
+
+    if (planet != null) {
+      planet.draw(g);
+
+    }
 
 
   }
@@ -193,12 +196,16 @@ Pair acceleration;
 
       }
     }
-    planet.update(this,time);
-    if ((margin - planet.position.x >= 2*planet.radius) ||(planet.position.x - (width+margin) >= 0)
-  || (planet.position.y - (height + margin) >= 0)){
-    planet = null;
 
-  }
+    if (planet != null) {
+      planet.update(this,time);
+      if ((margin - planet.position.x >= planet.radius) ||(planet.position.x - (width+margin) >= planet.radius)
+    || (planet.position.y - (height + margin) >= planet.radius)){
+      planet = null;
+
+    }
+    }
+
 
   }
 
@@ -207,34 +214,7 @@ Pair acceleration;
   }
 
 
-public void updateGravity(char charKeyPressed){
-  Pair leftG = new Pair(-300.0, 0.0);
-  Pair rightG = new Pair(300.0, 0.0);
-  Pair downG = new Pair(0.0, 300.0);
-  Pair upG = new Pair(0.0, -300.0);
-  Pair noG = new Pair(0.0, 0.0);
-  System.out.println(charKeyPressed);
 
-    switch (charKeyPressed){
-
-      case 'w': acceleration = upG;
-
-break;
-      case 's': acceleration = downG;
-      break;
-
-      case 'a': acceleration = leftG;
-      break;
-
-      case 'd': acceleration = rightG;
-      break;
-
-      default: acceleration = noG;
-      break;
-
-  }
-
-}
 }
 
 public class CindySpace extends JPanel implements KeyListener{
@@ -265,34 +245,31 @@ public class CindySpace extends JPanel implements KeyListener{
       // timer.schedule(world.renewPlanet(),0,10000/diff);
 
     }
+    class KeepPlanetComing implements Runnable{
+      public void run()
+      {
+      while(true){
+        world.renewPlanet();
+        // charKeyPressed = 'n';
+        repaint();
+        try{
+          Thread.sleep(30000/diff);
+        }
+        catch(InterruptedException e){}
+        }
+    }
+  }
 
 
-    public void keyPressed(KeyEvent e) {
-      char c=e.getKeyChar();
-      System.out.println("You pressed down: " + c);
-charKeyPressed = c;
-    }
-    public void keyReleased(KeyEvent e) {
-      char c=e.getKeyChar();
-      System.out.println("\tYou let go of: " + c);
-    }
-
-
-    public void keyTyped(KeyEvent e) {
-      char c = e.getKeyChar();
-      System.out.println("You typed: " + c);
-    }
-    public void addNotify() {
-      super.addNotify();
-      requestFocus();
-    }
 
     public CindySpace(){
       world = new World(WIDTH, HEIGHT, MARGIN,diff);
       addKeyListener(this);
       this.setPreferredSize(new Dimension(WIDTH+ 2*MARGIN, HEIGHT+ 2*MARGIN));
       Thread mainThread = new Thread(new Runner());
+      Thread planetThread = new Thread(new KeepPlanetComing());
       mainThread.start();
+      planetThread.start();
     }
 
     public static void main(String[] args){
