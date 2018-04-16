@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Dimension;
 import java.util.Random;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 import java.lang.Math;
 
 class Pair{
@@ -174,20 +176,26 @@ Pair acceleration;
   }
 
   public void drawSpheres(Graphics g){
+
+    // should paint planet first to set it in the back
+
+    if (planet != null) {
+  planet.draw(g);
+
+}
     for (int i = 0; i < numAsteroids; i++){
       asteroids[i].draw(g);
 
     }
 
-    if (planet != null) {
-      planet.draw(g);
 
-    }
 
 
   }
 
   public void updateSpheres(double time){
+
+
     for (int i = 0; i < numAsteroids; i ++){
       asteroids[i].update(this,time);
       if ((margin - asteroids[i].position.x >= asteroids[i].radius) ||(asteroids[i].position.x - (width+margin) >= asteroids[i].radius)
@@ -214,10 +222,37 @@ Pair acceleration;
   }
 
 
-
+// public void updateGravity(char charKeyPressed){
+//   Pair leftG = new Pair(-300.0, 0.0);
+//   Pair rightG = new Pair(300.0, 0.0);
+//   Pair downG = new Pair(0.0, 300.0);
+//   Pair upG = new Pair(0.0, -300.0);
+//   Pair noG = new Pair(0.0, 0.0);
+//   System.out.println(charKeyPressed);
+//
+//     switch (charKeyPressed){
+//
+//       case 'w': acceleration = upG;
+//
+// break;
+//       case 's': acceleration = downG;
+//       break;
+//
+//       case 'a': acceleration = leftG;
+//       break;
+//
+//       case 'd': acceleration = rightG;
+//       break;
+//
+//       default: acceleration = noG;
+//       break;
+//
+//   }
+//
+// }
 }
-
-public class CindySpace extends JPanel implements KeyListener{
+public class CindySpace extends JPanel{
+// public class CindySpace extends JPanel implements KeyListener{
   public static final int WIDTH = 1024 ;
   public static final int HEIGHT = 768 ;
   public static final int MARGIN = 200;
@@ -229,7 +264,7 @@ public class CindySpace extends JPanel implements KeyListener{
     public void run()
     {
       while(true){
-        world.updateGravity(charKeyPressed);
+        // world.updateGravity(charKeyPressed);
         world.updateSpheres(1.0 / (double)FPS);
         // charKeyPressed = 'n';
         repaint();
@@ -261,10 +296,29 @@ public class CindySpace extends JPanel implements KeyListener{
   }
 
 
+//     public void keyPressed(KeyEvent e) {
+//       char c=e.getKeyChar();
+//       System.out.println("You pressed down: " + c);
+// charKeyPressed = c;
+//     }
+//     public void keyReleased(KeyEvent e) {
+//       char c=e.getKeyChar();
+//       System.out.println("\tYou let go of: " + c);
+//     }
+//
+//
+//     public void keyTyped(KeyEvent e) {
+//       char c = e.getKeyChar();
+//       System.out.println("You typed: " + c);
+//     }
+//     public void addNotify() {
+//       super.addNotify();
+//       requestFocus();
+//     }
 
     public CindySpace(){
       world = new World(WIDTH, HEIGHT, MARGIN,diff);
-      addKeyListener(this);
+      // addKeyListener(this);
       this.setPreferredSize(new Dimension(WIDTH+ 2*MARGIN, HEIGHT+ 2*MARGIN));
       Thread mainThread = new Thread(new Runner());
       Thread planetThread = new Thread(new KeepPlanetComing());
