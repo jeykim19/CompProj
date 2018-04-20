@@ -1,7 +1,13 @@
-import java.lang.Math;
+import java.lang.Math.*;
 import java.awt.Graphics;
-import java.awt.geom;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.AffineTransform;
 import java.util.List;
+import java.util.ArrayList;
 
 public class Spaceship implements Movement{
     //public Pair[] vertices;
@@ -12,17 +18,18 @@ public class Spaceship implements Movement{
     public Pair center;
     Pair velocity;
     Pair acceleration;
-    public static final double maxVelocity;
+    public static final double maxVelocity = 100;
 
     public Spaceship(Pair[] vertices){
         //this.vertices = vertices;
         createPath(vertices);
         //this.top = vertices[0];
         //this.bottom = vertices[2];
-        this.verticalHeight = Math.abs(top.y - bottom.y);
+        this.verticalHeight = Math.abs(vertices[0].y - vertices[2].y);
         this.center = getCentroid();
-        this.velocity = new Pair<>(0.0, 0.0);
-        this.acceleration = new Pair<>(0.0, 0.0);
+        this.velocity = new Pair(0.0, 0.0);
+        this.acceleration = new Pair(0.0, 0.0);
+        //this.maxVelocity = 100;
     }
 
     private void createPath(Pair[] vertices){
@@ -36,17 +43,19 @@ public class Spaceship implements Movement{
     }
 
     public void setCentroid(){
-        center = findCentroid(spaceship);
+        center = findCentroid(findVertices(spaceship));
     }
 
-    public void getCentroid(){
+    public Pair getCentroid(){
         setCentroid();
         return this.center;
     }
 
     public void draw(Graphics2D g, Color color){
-        GradientPaint redFade = new GradientPaint(0, 0, new Color(255, 0, 0), 0, verticalHeight, new Color(50, 0, 0));
-        g.setColor(redFade);
+        //Graphics2D g = (Graphics2D) gOri;
+
+        GradientPaint redFade = new GradientPaint(0, 0, new Color(255, 0, 0), 0, (int)verticalHeight, new Color(50, 0, 0));
+        g.setPaint(redFade);
 
         g.draw(spaceship);
     }
@@ -72,8 +81,8 @@ public class Spaceship implements Movement{
 
     public void accelerate(double time){
         velocity = velocity.add(acceleration.times(time));
-        velocity.x = Math.max(maxVolecity, velocity.x);
-        velocity.y = Math.max(maxVolecity, velocity.y);
+        velocity.x = Math.max(maxVelocity, velocity.x);
+        velocity.y = Math.max(maxVelocity, velocity.y);
     }
 
     public void decelerate(double time){
@@ -86,19 +95,27 @@ public class Spaceship implements Movement{
         //Theta - how many radians you rotate per second
         AffineTransform transformation = new AffineTransform();
         //convert to radians
-        theta = theta*Math.pi/180;
+        theta = theta*Math.PI/180;
         Pair centroid = findCentroid(findVertices(spaceship));
         transformation.rotate(theta*time, centroid.x, centroid.y);
     }
 
+    public Pair getFront(){
+        double[] coordinates = new double[6];
+        PathIterator pi = spaceship.getPathIterator(null);
+
+        int type = pi.currentSegment(coordinates); //necessary?
+        return new Pair(coordinates[0], coordinates[1]);
+    }
+
     public List<Pair> findVertices(Path2D path){
-        ArrayList<Pair> points = new ArrayList<Pair>;
-        ArrayList<double[]> pathIteratorPoints = new ArrayList<double[]>
+        ArrayList<Pair> points = new ArrayList<Pair>();
+        ArrayList<double[]> pathIteratorPoints = new ArrayList<double[]>();
         double[] coordinates = new double[6];
 
         for(PathIterator pi = path.getPathIterator(null); !pi.isDone(); pi.next()){
             int type = pi.currentSegment(coordinates);
-            double[] toAdd = {type, coordinates[0], coordinates[1]};
+            double[] toAdd = {(double)type, coordinates[0], coordinates[1]};
             pathIteratorPoints.add(toAdd);
         }
 
@@ -106,7 +123,7 @@ public class Spaceship implements Movement{
 
         for(int i = 0; i < size; i++){
             double[] currentPoint = pathIteratorPoints.get(i);
-            if(currentPoint[0] == SEG_MOVETO){
+            if(currentPoint[0] == PathIterator.SEG_MOVETO){ //return to this
                 points.add(new Pair(currentPoint[1], currentPoint[2]));
             }
         }
@@ -137,8 +154,8 @@ public class Spaceship implements Movement{
         double centroidY;
         int size = pointList.size();
 
-        for(int i  = 0; i < size, i++){
-            double summand = pointList.get(i).x * pointList.get((i+1)%size).y - pointList.get(i).y * pointList.get((i+1)%size).x)
+        for(int i = 0; i < size; i++){
+            double summand = pointList.get(i).x * pointList.get((i+1)%size).y - pointList.get(i).y * pointList.get((i+1)%size).x;
             sumX += (pointList.get(i).x + pointList.get((i+1)%size).x)*summand;
             sumY += (pointList.get(i).y + pointList.get((i+1)%size).y)*summand;
         }
