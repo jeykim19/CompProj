@@ -1,8 +1,8 @@
 public interface Movement{
-    public void move();
-    public void accelerate();
-    public void decelerate();
-    public void shot();
-    public void collide();
-    public void rotate();
+    public void move(double time);
+    public void accelerate(double time);
+    public void decelerate(double time);
+    //public void shot();
+    //public void collide();
+    public void rotate(double theta, double time);
 }
