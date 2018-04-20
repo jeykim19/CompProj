@@ -7,5 +7,6 @@ public interface GenericOrderedCollection<E>{
     public String toString();
     public int length();
     public boolean isEmpty();
+    public Node<E> get(E element);
 }
 

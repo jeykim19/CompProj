@@ -3,7 +3,7 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
     Node<E> end;
     //Node<E> beginning;
     int myCurrentLength;
-    public MyGenericDS(){
+    public LinkedDS(){
         end = null;
         //beginning = null;
         myCurrentLength = 0;
@@ -37,7 +37,7 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
 
         Node<E> n = end;
         while (n != null) {
-            if (n == element) {
+            if (n.element == element) {
                 n.child.parent = n.parent;
                 n.parent.child = n.child;
             }
@@ -97,13 +97,22 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
         }
         return false;
     }
+    public Node<E> get(E element){
+        Node<E> n  = end;
+        while(n != null){
+            if(n.element == element){
+                return n;
+            }
+        }
+        return null;
+    }
 }
 
 class Node<E>{
     E element;
     Node<E> parent;
     Node<E> child;
-    public Node(E element, Node<E> parent){
+    public Node(E element, Node<E> parent, Node<E> child){
         this.element = element;
         this.parent = parent;
         this.child = child;
