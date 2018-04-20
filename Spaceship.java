@@ -19,6 +19,7 @@ public class Spaceship implements Movement{
     Pair velocity;
     Pair acceleration;
     public static final double maxVelocity = 100;
+    GradientPaint fade;
 
     public Spaceship(Pair[] vertices){
         //this.vertices = vertices;
@@ -30,9 +31,10 @@ public class Spaceship implements Movement{
         this.velocity = new Pair(0.0, 0.0);
         this.acceleration = new Pair(0.0, 0.0);
         //this.maxVelocity = 100;
+        fade = new GradientPaint(0, 0, new Color(255, 0, 0), 0, (int)verticalHeight, new Color(50, 0, 0));
     }
 
-    private void createPath(Pair[] vertices){
+    protected void createPath(Pair[] vertices){
         spaceship = new Path2D.Double(Path2D.Double.WIND_EVEN_ODD, vertices.length);
         spaceship.moveTo(vertices[0].x, vertices[0].y);
 
@@ -51,11 +53,11 @@ public class Spaceship implements Movement{
         return this.center;
     }
 
-    public void draw(Graphics2D g, Color color){
+    public void draw(Graphics2D g){
         //Graphics2D g = (Graphics2D) gOri;
 
-        GradientPaint redFade = new GradientPaint(0, 0, new Color(255, 0, 0), 0, (int)verticalHeight, new Color(50, 0, 0));
-        g.setPaint(redFade);
+        //GradientPaint redFade = new GradientPaint(0, 0, new Color(255, 0, 0), 0, (int)verticalHeight, new Color(50, 0, 0));
+        g.setPaint(fade);
 
         g.draw(spaceship);
     }
