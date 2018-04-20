@@ -146,7 +146,7 @@ class Debris extends Asteroid{
 	super (initWidth,initHeight,initMargin,initDiff);
 	super.position=new Pair (500.0,500.0);
 	Random rand=new Random ();
-	super. angle = Math.PI/10*rand.nextInt(100);
+	super. angle = Math.PI/5*rand.nextInt(100);
 	super.velocity = new Pair(Math.cos(angle)*speed, Math.sin(angle)*speed);
 	 int iVertex;
     for (iVertex = 0 ;iVertex < NumVertices ;iVertex ++ ) {
