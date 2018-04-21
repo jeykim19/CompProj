@@ -49,10 +49,10 @@ public class JustinSpace extends JPanel implements KeyListener{
     public void keyPressed(KeyEvent e) {
         char c=e.getKeyChar();
         if(c == 'q'){
-            player.rotate(45.0, 1.0/(double)FPS);
+            player.rotate(-45.0, 1/(double)FPS);
         }
         if(c == 'e'){
-            player.rotate(-45.0, 1.0/(double)FPS);
+            player.rotate(45.0, 1.0/(double)FPS);
         }
         if(c == 'w'){
             player.setAcceleration(new Pair(0.0, -200.0));
@@ -98,10 +98,10 @@ public class JustinSpace extends JPanel implements KeyListener{
     public void keyTyped(KeyEvent e) {
         char c = e.getKeyChar();
         if(c == 'q'){
-            player.rotate(45.0, 1);
+            player.rotate(-45.0, 1/(double)FPS);
         }
         if(c == 'e'){
-            player.rotate(-45.0, 1.0/(double)FPS);
+            player.rotate(45.0, 1.0/(double)FPS);
         }
         if(c == 'w'){
             player.setAcceleration(new Pair(0.0, -200.0));
@@ -178,7 +178,7 @@ public class JustinSpace extends JPanel implements KeyListener{
 
         g.setPaint(Color.BLACK);
         g.fillRect(0, 0, WIDTH, HEIGHT);
-        player.rotate(45, 1/(double)FPS);
+        // player.rotate(45, 1/(double)FPS);
         player.move(1.0 / (double)FPS);
         player.draw(g);
 

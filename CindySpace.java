@@ -40,21 +40,21 @@ class Pair{
 
 class Sphere{
   int height;
-int width;
-int margin;
+  int width;
+  int margin;
   Pair position;
   Pair velocity;
   double radius;
   int diff;
   public Sphere(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
-        margin = initMargin;
-        width = initWidth;
-        height = initHeight;
+    margin = initMargin;
+    width = initWidth;
+    height = initHeight;
     Random rand = new Random();
 
     // the postion of a sphere is its center
-  position = new Pair(rand.nextDouble()*width + margin,0.0);
+    position = new Pair(rand.nextDouble()*width + margin,0.0);
 
   }
   public void update(World w, double time){
@@ -107,8 +107,8 @@ class Asteroid extends Sphere {
 
       dists[iVertex] = rand.nextDouble()*radius/4 + radius;
 
+    }
   }
-}
 
   public void draw(Graphics g){
 
@@ -117,9 +117,9 @@ class Asteroid extends Sphere {
 
     for (iVertex = 0 ;iVertex < NumVertices ;iVertex ++ ) {
 
-    xs[iVertex] = (int)(position.x + Math.cos(angles[iVertex])*dists[iVertex]);
-    ys[iVertex] = (int)(position.y + Math.sin(angles[iVertex])*dists[iVertex]);
-}
+      xs[iVertex] = (int)(position.x + Math.cos(angles[iVertex])*dists[iVertex]);
+      ys[iVertex] = (int)(position.y + Math.sin(angles[iVertex])*dists[iVertex]);
+    }
     g.drawPolygon(xs,ys,NumVertices);
   }
 
@@ -152,7 +152,7 @@ class World{
   Asteroid asteroids[];
   Planet planet;
 
-Pair acceleration;
+  Pair acceleration;
 
   public World(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
@@ -180,9 +180,9 @@ Pair acceleration;
     // should paint planet first to set it in the back
 
     if (planet != null) {
-  planet.draw(g);
+      planet.draw(g);
 
-}
+    }
     for (int i = 0; i < numAsteroids; i++){
       asteroids[i].draw(g);
 
@@ -208,10 +208,10 @@ Pair acceleration;
     if (planet != null) {
       planet.update(this,time);
       if ((margin - planet.position.x >= planet.radius) ||(planet.position.x - (width+margin) >= planet.radius)
-    || (planet.position.y - (height + margin) >= planet.radius)){
-      planet = null;
+      || (planet.position.y - (height + margin) >= planet.radius)){
+        planet = null;
 
-    }
+      }
     }
 
 
@@ -222,37 +222,37 @@ Pair acceleration;
   }
 
 
-// public void updateGravity(char charKeyPressed){
-//   Pair leftG = new Pair(-300.0, 0.0);
-//   Pair rightG = new Pair(300.0, 0.0);
-//   Pair downG = new Pair(0.0, 300.0);
-//   Pair upG = new Pair(0.0, -300.0);
-//   Pair noG = new Pair(0.0, 0.0);
-//   System.out.println(charKeyPressed);
-//
-//     switch (charKeyPressed){
-//
-//       case 'w': acceleration = upG;
-//
-// break;
-//       case 's': acceleration = downG;
-//       break;
-//
-//       case 'a': acceleration = leftG;
-//       break;
-//
-//       case 'd': acceleration = rightG;
-//       break;
-//
-//       default: acceleration = noG;
-//       break;
-//
-//   }
-//
-// }
+  // public void updateGravity(char charKeyPressed){
+  //   Pair leftG = new Pair(-300.0, 0.0);
+  //   Pair rightG = new Pair(300.0, 0.0);
+  //   Pair downG = new Pair(0.0, 300.0);
+  //   Pair upG = new Pair(0.0, -300.0);
+  //   Pair noG = new Pair(0.0, 0.0);
+  //   System.out.println(charKeyPressed);
+  //
+  //     switch (charKeyPressed){
+  //
+  //       case 'w': acceleration = upG;
+  //
+  // break;
+  //       case 's': acceleration = downG;
+  //       break;
+  //
+  //       case 'a': acceleration = leftG;
+  //       break;
+  //
+  //       case 'd': acceleration = rightG;
+  //       break;
+  //
+  //       default: acceleration = noG;
+  //       break;
+  //
+  //   }
+  //
+  // }
 }
 public class CindySpace extends JPanel{
-// public class CindySpace extends JPanel implements KeyListener{
+  // public class CindySpace extends JPanel implements KeyListener{
   public static final int WIDTH = 1024 ;
   public static final int HEIGHT = 768 ;
   public static final int MARGIN = 200;
@@ -283,74 +283,74 @@ public class CindySpace extends JPanel{
     class KeepPlanetComing implements Runnable{
       public void run()
       {
-      while(true){
-        world.renewPlanet();
-        // charKeyPressed = 'n';
-        repaint();
-        try{
-          Thread.sleep(30000/diff);
+        while(true){
+          world.renewPlanet();
+          // charKeyPressed = 'n';
+          repaint();
+          try{
+            Thread.sleep(30000/diff);
+          }
+          catch(InterruptedException e){}
+          }
         }
-        catch(InterruptedException e){}
-        }
+      }
+
+
+      //     public void keyPressed(KeyEvent e) {
+      //       char c=e.getKeyChar();
+      //       System.out.println("You pressed down: " + c);
+      // charKeyPressed = c;
+      //     }
+      //     public void keyReleased(KeyEvent e) {
+      //       char c=e.getKeyChar();
+      //       System.out.println("\tYou let go of: " + c);
+      //     }
+      //
+      //
+      //     public void keyTyped(KeyEvent e) {
+      //       char c = e.getKeyChar();
+      //       System.out.println("You typed: " + c);
+      //     }
+      //     public void addNotify() {
+      //       super.addNotify();
+      //       requestFocus();
+      //     }
+
+      public CindySpace(){
+        world = new World(WIDTH, HEIGHT, MARGIN,diff);
+        // addKeyListener(this);
+        this.setPreferredSize(new Dimension(WIDTH+ 2*MARGIN, HEIGHT+ 2*MARGIN));
+        Thread mainThread = new Thread(new Runner());
+        Thread planetThread = new Thread(new KeepPlanetComing());
+        mainThread.start();
+        planetThread.start();
+      }
+
+      public static void main(String[] args){
+        JFrame frame = new JFrame("Physics!!!");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        CindySpace mainInstance = new CindySpace();
+        frame.setContentPane(mainInstance);
+        frame.pack();
+        frame.setVisible(true);
+      }
+
+
+      public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, WIDTH+ 2*MARGIN, HEIGHT+ 2*MARGIN);
+
+        world.drawSpheres(g);
+
+        g.setColor(Color.blue);
+        g.fillRect(0,0,WIDTH + 2*MARGIN,MARGIN);
+        g.fillRect(0,0,MARGIN,HEIGHT + 2*MARGIN);
+        g.fillRect(WIDTH + MARGIN,0,MARGIN,HEIGHT + 2*MARGIN);
+        g.fillRect(0,HEIGHT + MARGIN,WIDTH + 2*MARGIN,MARGIN);
+
+      }
+
+
     }
-  }
-
-
-//     public void keyPressed(KeyEvent e) {
-//       char c=e.getKeyChar();
-//       System.out.println("You pressed down: " + c);
-// charKeyPressed = c;
-//     }
-//     public void keyReleased(KeyEvent e) {
-//       char c=e.getKeyChar();
-//       System.out.println("\tYou let go of: " + c);
-//     }
-//
-//
-//     public void keyTyped(KeyEvent e) {
-//       char c = e.getKeyChar();
-//       System.out.println("You typed: " + c);
-//     }
-//     public void addNotify() {
-//       super.addNotify();
-//       requestFocus();
-//     }
-
-    public CindySpace(){
-      world = new World(WIDTH, HEIGHT, MARGIN,diff);
-      // addKeyListener(this);
-      this.setPreferredSize(new Dimension(WIDTH+ 2*MARGIN, HEIGHT+ 2*MARGIN));
-      Thread mainThread = new Thread(new Runner());
-      Thread planetThread = new Thread(new KeepPlanetComing());
-      mainThread.start();
-      planetThread.start();
-    }
-
-    public static void main(String[] args){
-      JFrame frame = new JFrame("Physics!!!");
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      CindySpace mainInstance = new CindySpace();
-      frame.setContentPane(mainInstance);
-      frame.pack();
-      frame.setVisible(true);
-    }
-
-
-    public void paintComponent(Graphics g) {
-      super.paintComponent(g);
-
-      g.setColor(Color.BLACK);
-      g.fillRect(0, 0, WIDTH+ 2*MARGIN, HEIGHT+ 2*MARGIN);
-
-      world.drawSpheres(g);
-
-      g.setColor(Color.blue);
-      g.fillRect(0,0,WIDTH + 2*MARGIN,MARGIN);
-      g.fillRect(0,0,MARGIN,HEIGHT + 2*MARGIN);
-      g.fillRect(WIDTH + MARGIN,0,MARGIN,HEIGHT + 2*MARGIN);
-      g.fillRect(0,HEIGHT + MARGIN,WIDTH + 2*MARGIN,MARGIN);
-
-    }
-
-
-  }
