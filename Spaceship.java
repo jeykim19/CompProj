@@ -53,13 +53,21 @@ public class Spaceship implements Movement{
         return this.center;
     }
 
+    protected void setGradient(){
+        Pair front = getFront();
+        //Pair center = getCentroid();
+        fade = new GradientPaint((int)front.x, (int)front.y, new Color(255, 0, 0), (int)center.x, (int)center.y, new Color(50, 0, 0));
+    }
+
     public void draw(Graphics2D g){
         //Graphics2D g = (Graphics2D) gOri;
 
         //GradientPaint redFade = new GradientPaint(0, 0, new Color(255, 0, 0), 0, (int)verticalHeight, new Color(50, 0, 0));
+        //Pair front = getFront();
+        setGradient();
         g.setPaint(fade);
 
-        g.draw(spaceship);
+        g.fill(spaceship);
     }
 
     public void move(double time){
@@ -69,6 +77,7 @@ public class Spaceship implements Movement{
         }
         */
         AffineTransform transformation = new AffineTransform();
+        //velo
         transformation.translate(velocity.times(time).x, velocity.times(time).y);
         spaceship.transform(transformation);
     }
@@ -82,24 +91,27 @@ public class Spaceship implements Movement{
     }
 
     public void accelerate(double time){
+        System.out.println(acceleration.x + " " + acceleration.y);
         velocity = velocity.add(acceleration.times(time));
-        velocity.x = Math.max(maxVelocity, velocity.x);
-        velocity.y = Math.max(maxVelocity, velocity.y);
+        velocity.x = Math.min(maxVelocity, velocity.x);
+        velocity.y = Math.min(maxVelocity, velocity.y);
     }
 
     public void decelerate(double time){
         velocity = velocity.add(acceleration.times(-time));
-        velocity.x = Math.min(0, velocity.x);
-        velocity.y = Math.min(0, velocity.y);
+        velocity.x = Math.max(0, velocity.x);
+        velocity.y = Math.max(0, velocity.y);
     }
 
     public void rotate(double theta, double time){
         //Theta - how many radians you rotate per second
+        System.out.println("access");
         AffineTransform transformation = new AffineTransform();
         //convert to radians
         theta = theta*Math.PI/180;
         Pair centroid = findCentroid(findVertices(spaceship));
         transformation.rotate(theta*time, centroid.x, centroid.y);
+        spaceship.transform(transformation);
     }
 
     public Pair getFront(){
@@ -128,6 +140,9 @@ public class Spaceship implements Movement{
             if(currentPoint[0] == PathIterator.SEG_MOVETO){ //return to this
                 points.add(new Pair(currentPoint[1], currentPoint[2]));
             }
+            if(currentPoint[0] == PathIterator.SEG_LINETO){
+                points.add(new Pair(currentPoint[1], currentPoint[2]));
+            }
         }
 
         return points;
@@ -144,7 +159,7 @@ public class Spaceship implements Movement{
             yxSum += (pointList.get(i).y)*(pointList.get((i+1)%size).x);
         }
 
-        double toReturn = (Math.abs(xySum - yxSum)) / 2;
+        double toReturn = (xySum - yxSum) / 2;
 
         return toReturn;
     }
@@ -157,10 +172,14 @@ public class Spaceship implements Movement{
         int size = pointList.size();
 
         for(int i = 0; i < size; i++){
-            double summand = pointList.get(i).x * pointList.get((i+1)%size).y - pointList.get(i).y * pointList.get((i+1)%size).x;
-            sumX += (pointList.get(i).x + pointList.get((i+1)%size).x)*summand;
-            sumY += (pointList.get(i).y + pointList.get((i+1)%size).y)*summand;
+            int nextIndex = (i+1)%size;
+            double summand = pointList.get(i).x * pointList.get(nextIndex).y - pointList.get(i).y * pointList.get(nextIndex).x;
+            //System.out.println(summand);
+            sumX += (pointList.get(i).x + pointList.get(nextIndex).x)*summand;
+            sumY += (pointList.get(i).y + pointList.get(nextIndex).y)*summand;
         }
+        //double summand = pointList.get(size-1).x * pointList.get(0).y - pointList.get(size-1).y * pointList.get(0).x;
+        //System.out.println("sums: "+ sumX + " " + sumY);
 
         centroidX = sumX / (6*findArea(pointList));
         centroidY = sumY / (6*findArea(pointList));

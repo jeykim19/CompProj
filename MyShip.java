@@ -24,5 +24,6 @@ public class MyShip extends Spaceship{
         theta = theta*Math.PI/180;
         Pair centroid = findCentroid(findVertices(spaceship));
         transformation.rotate(theta*time, centroid.x, centroid.y);
+        spaceship.transform(transformation);
     }
 }

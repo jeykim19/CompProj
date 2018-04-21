@@ -89,6 +89,7 @@ public class OtherShip extends Spaceship{
         if(frontLocation != isBelow){
             transformation.rotate(-theta*time, anchor.x, anchor.y);
         }
+        spaceship.transform(transformation);
    }
 
    public double findSlope(Pair point1, Pair point2){
