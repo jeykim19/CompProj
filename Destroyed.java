@@ -142,9 +142,9 @@ class Planet extends Sphere{
 
 }
 class Debris extends Asteroid{
-    public Debris(int initWidth, int initHeight, int initMargin, int initDiff){
+    public Debris(int initWidth, int initHeight, int initMargin, int initDiff, double x, double y){
 	super (initWidth,initHeight,initMargin,initDiff);
-	super.position=new Pair (500.0,500.0);
+	super.position=new Pair (x,y);
 	Random rand=new Random ();
 	super. angle = Math.PI/5*rand.nextInt(100);
 	super.velocity = new Pair(Math.cos(angle)*speed, Math.sin(angle)*speed);
@@ -161,7 +161,7 @@ class Debris extends Asteroid{
 
   }
     }
-    public static int count=400;
+  
     
     public void draw(Graphics g){
 
@@ -173,10 +173,9 @@ class Debris extends Asteroid{
     ys[iVertex] = (int)(position.y + Math.sin(angles[iVertex])*dists[iVertex]);
 }
 
-    if (count>=0){
+
     g.drawPolygon(xs,ys,NumVertices);
-    count=count-1;
-    }}
+    
   
 }
 class World{
@@ -210,7 +209,7 @@ Pair acceleration;
       asteroids[i] = new Asteroid(width, height, margin, diff);
     }
     for (int i=0; i< 5; i++){
-	crushed[i]=new Debris(width, height, margin, diff);
+	crushed[i]=new Debris(width, height, margin, diff,0.0,0.0);
     }
     
     planet = new Planet(width, height, margin, diff);
