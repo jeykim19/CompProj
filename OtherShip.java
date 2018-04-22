@@ -20,7 +20,14 @@ public class OtherShip extends Spaceship{
         super(vertices);
         freeShips.append(this);
         this.motherShip = motherShip;
-        fade = new GradientPaint(0, 0, new Color(0, 0, 255), 0, (int)verticalHeight, new Color(0, 0, 50));
+        //fade = new GradientPaint(0, 0, new Color(0, 0, 255), 0, (int)verticalHeight, new Color(0, 0, 50));
+        setGradient();
+    }
+
+    protected void setGradient(){
+        Pair front = getFront();
+        //Pair center = getCentroid();
+        fade = new GradientPaint((int)front.x, (int)front.y, new Color(0, 0, 255), (int)center.x, (int)center.y, new Color(0, 0, 50));
     }
 
     public void captured(){
