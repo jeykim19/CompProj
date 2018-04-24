@@ -47,14 +47,16 @@ Pair acceleration;
     {
       asteroids[i] = new Asteroid(width, height, margin, diff);
     }
-     for (int i=0; i< 5; i++){
-	 crushed[i]=new Debris(width, height, margin, diff,asteroids[0].position.x,asteroids[0].position.y);
-    }
+    
 
     planet = new Planet(width, height, margin, diff);
 
   }
-    // public static int count=20;
+    public void makeDebris(int asteroidnum){
+	 for (int i=0; i< 5; i++){
+	     crushed[i]=new Debris(width, height, margin, diff,asteroids[asteroidnum].position.x,asteroids[asteroidnum].position.y);
+    }
+    }
   public void drawSpheres(Graphics g){
 
     // should paint planet first to set it in the back
@@ -76,10 +78,10 @@ Pair acceleration;
 
     public void drawDebris(Graphics g){
     	  for (int i=0; i<5; i++){
-    	crushed[i].draw(g);
+	      crushed[i].draw(g);
+	  }
      }
-     }
-     public void updateDebris(double time){
+    public void updateDebris(double time){
         for (int i=0; i<5; i++){
           crushed[i].update(this,time);
        }
@@ -132,7 +134,9 @@ public class Prototype extends JPanel implements KeyListener{
         {
             while(true){
 		world.updateSpheres(1.0/(double)FPS);
-                world.updateDebris(1.0 / (double)FPS);
+		//if (done==true){
+		//	world.updateDebris(1.0 / (double)FPS);
+		//	}
                 repaint();
                 try{
                     Thread.sleep(1000/FPS);
@@ -391,7 +395,11 @@ public class Prototype extends JPanel implements KeyListener{
         //System.out.println("access main");
     }
 
-
+    public static int counter=0;
+    public static boolean check=false;
+    public static boolean done=false;
+   
+    
     public void paintComponent(Graphics gOri) {
        
     	Crush crush=new Crush();
@@ -414,13 +422,15 @@ public class Prototype extends JPanel implements KeyListener{
 	//otherShip1.rotate(45,1.0/(double)FPS);
 	//otherShip2.rotate(45,1.0/(double)FPS);
 	
-       	boolean check=false;
 	int count=world.numAsteroids;
 	int j=0;
+	int num=0;
+	
 	while (count>0){
 	    if (crush.CrushAS(world.asteroids[j].position,world.asteroids[j].radius,player.findVertices(player.spaceship))==true){
-	    check=true;
-	    break;
+		num=j;
+		check=true;
+		break;
 	}
 	else{
 	    check=false;
@@ -430,9 +440,47 @@ public class Prototype extends JPanel implements KeyListener{
 	j=j+1;
 	}
 
-	System.out.println(check);
 
+	
+	if (check==true){
+	    if (done==false){
+		world.makeDebris(num);
+		//make asteroid disappear here! but how?
+	       	done=true;
+		counter=100;
+	    }
+	 
+        
+	}
+     
+	else if (check==false){
+	     done=false;
+	}
+	
+	//System.out.println(done);
 
+	if ((counter>0)&&(counter!=1)){
+	    world.drawDebris(g);
+	    world.updateDebris(1.0 / (double)FPS);
+	    counter=counter-1;
+
+	}
+
+	if (counter==1){
+	    counter=0;
+	    done=false;
+	}
+	//	if ((check==true)&&(counter>0)){
+	//	    if (done1==false){
+	//	world.makeDebris(num);
+	//		done1=true;
+	//		counter1=100;
+	//	    }
+	//	}
+	//else if ((check==false)&&(counter>0)){
+	// done=true;
+      
+	//	}
 	
 	    player.draw(g);
       
