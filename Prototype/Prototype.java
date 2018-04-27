@@ -47,7 +47,7 @@ Pair acceleration;
     {
       asteroids[i] = new Asteroid(width, height, margin, diff);
     }
-    
+
 
     planet = new Planet(width, height, margin, diff);
 
@@ -65,7 +65,7 @@ Pair acceleration;
 	planet.draw(g);
 
     }
- 
+
     //if (count>=0){//alter here
     for (int i = 0; i < numAsteroids; i++){
       asteroids[i].draw(g);
@@ -94,7 +94,7 @@ Pair acceleration;
         asteroids[i] = new Asteroid(width, height, margin, diff);
 
       }
-	
+
       }
 
     if (planet != null) {
@@ -238,7 +238,7 @@ public class Prototype extends JPanel implements KeyListener{
 	    allSpheres[i].acceleration = new Pair(0.0, 0.0);
 	}
 	*/
-       
+
     }
 
 
@@ -325,7 +325,7 @@ public class Prototype extends JPanel implements KeyListener{
             vertex = vertex.add(new Pair(200, 200));
         }
 
-	
+
         player = new MyShip(vertices);
 
         player.setCentroid();
@@ -367,7 +367,7 @@ public class Prototype extends JPanel implements KeyListener{
                 }
             }
 	    }*/
-	    
+
 	    /*	otherShip1 = new OtherShip(vertices1, player);
         otherShip2 = new OtherShip(vertices2, player);
         otherShip3 = new OtherShip(vertices3, player);
@@ -398,10 +398,10 @@ public class Prototype extends JPanel implements KeyListener{
     public static int counter=0;
     public static boolean check=false;
     public static boolean done=false;
-   
-    
+    //public static int counter1=0;
+
     public void paintComponent(Graphics gOri) {
-       
+
     	Crush crush=new Crush();
         Graphics2D g = (Graphics2D) gOri;
 
@@ -418,14 +418,14 @@ public class Prototype extends JPanel implements KeyListener{
       g.fillRect(WIDTH + MARGIN,0,MARGIN,HEIGHT + 2*MARGIN);
       g.fillRect(0,HEIGHT + MARGIN,WIDTH + 2*MARGIN,MARGIN);
         player.rotate(45, 1/(double)FPS);
-	player.move(1.0/(double)FPS);	
+	player.move(1.0/(double)FPS);
 	//otherShip1.rotate(45,1.0/(double)FPS);
 	//otherShip2.rotate(45,1.0/(double)FPS);
-	
+
 	int count=world.numAsteroids;
 	int j=0;
 	int num=0;
-	
+
 	while (count>0){
 	    if (crush.CrushAS(world.asteroids[j].position,world.asteroids[j].radius,player.findVertices(player.spaceship))==true){
 		num=j;
@@ -440,23 +440,22 @@ public class Prototype extends JPanel implements KeyListener{
 	j=j+1;
 	}
 
-
-	
 	if (check==true){
 	    if (done==false){
 		world.makeDebris(num);
-		//make asteroid disappear here! but how?
+	        world.asteroids[j].position.x=0.0;
+		world.asteroids[j].position.y=0.0;
 	       	done=true;
 		counter=100;
 	    }
-	 
-        
+
+
 	}
-     
+
 	else if (check==false){
 	     done=false;
 	}
-	
+
 	//System.out.println(done);
 
 	if ((counter>0)&&(counter!=1)){
@@ -470,20 +469,10 @@ public class Prototype extends JPanel implements KeyListener{
 	    counter=0;
 	    done=false;
 	}
-	//	if ((check==true)&&(counter>0)){
-	//	    if (done1==false){
-	//	world.makeDebris(num);
-	//		done1=true;
-	//		counter1=100;
-	//	    }
-	//	}
-	//else if ((check==false)&&(counter>0)){
-	// done=true;
-      
-	//	}
-	
+
+
 	    player.draw(g);
-      
+
 	    // otherShip1.draw(g);
 	    // otherShip2.draw(g);
 	    // otherShip3.draw(g);
