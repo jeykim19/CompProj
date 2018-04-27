@@ -1,10 +1,10 @@
 //package oc;
 
-public class MyGenericDS<E> implements GenericOrderedCollection<E>{
+public class LinkedDS<E> implements GenericOrderedCollection<E>{
 
   // your code here
   private Node<E> end;
-  public  MyGenericDS(){
+  public  LinkedDS(){
     end = null;
   }
   public void append(E toAppend){
