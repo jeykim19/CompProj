@@ -16,6 +16,11 @@ import java.awt.geom.Area;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+
+
 
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
@@ -62,8 +67,8 @@ class Ship extends Sphere{
   double angle = 0.0;
   double rotation = 0.0;
   double radius = 20.0;
-int[] xs;
-int[] ys;
+  int[] xs;
+  int[] ys;
 
 
   public Ship (int initWidth, int initHeight,int initMargin, int initDiff){
@@ -71,13 +76,13 @@ int[] ys;
     velocity = new Pair(0.0,0.0);
 
     diff = initDiff;
-        margin = initMargin;
-        width = initWidth;
-        height = initHeight;
+    margin = initMargin;
+    width = initWidth;
+    height = initHeight;
     Random rand = new Random();
 
     // the postion of a sphere is its center
-  position = new Pair(0.5*width + margin, height+margin-30.0);
+    position = new Pair(0.5*width + margin, height+margin-30.0);
 
 
   }
@@ -94,67 +99,67 @@ int[] ys;
     double leftTurn = -Math.PI/1;
     double rightTurn = Math.PI/1;
 
-      switch (charKeyPressed){
+    switch (charKeyPressed){
 
-        case 'w': acceleration = up;
+      case 'w': acceleration = up;
 
-  break;
-        case 's': acceleration = down;
-        break;
+      break;
+      case 's': acceleration = down;
+      break;
 
-        case 'a': acceleration = left;
-        break;
+      case 'a': acceleration = left;
+      break;
 
-        case 'd': acceleration = right;
-        break;
+      case 'd': acceleration = right;
+      break;
 
-        case 'q': rotation = leftTurn;
-        break;
+      case 'q': rotation = leftTurn;
+      break;
 
-        case 'e': rotation = rightTurn;
-        break;
+      case 'e': rotation = rightTurn;
+      break;
 
 
-        default: acceleration = noAcc;
-        rotation = 0.0;
+      default: acceleration = noAcc;
+      rotation = 0.0;
 
-        break;
+      break;
 
     }
 
-velocity = velocity.add(acceleration.times(time));
+    velocity = velocity.add(acceleration.times(time));
     position = position.add(velocity.times(time));
     angle = angle + rotation * time;
 
 
-updateShape();
+    updateShape();
 
-rotateShape();
+    rotateShape();
 
 
+
+  }
+
+  public void updateShape(){
+    xs = new int[]{(int)position.x,(int)(position.x+radius),(int)(position.x+radius),(int)(position.x-radius),(int)(position.x-radius)};
+
+    ys = new int[]{(int)(position.y-radius),(int)position.y,(int)(position.y+radius),(int)(position.y+radius),(int)position.y};
+
+    roundScreen();
+    Polygon poly = new Polygon(xs,ys,5);
+    AffineTransform at = AffineTransform.getRotateInstance(0,position.x,position.y);
+    myShape = at.createTransformedShape (poly);
 
   }
 
-public void updateShape(){
-  xs = new int[]{(int)position.x,(int)(position.x+radius),(int)(position.x+radius),(int)(position.x-radius),(int)(position.x-radius)};
+  public void roundScreen(){
+    if ((position.x<= margin)||(position.x>= margin+width)||
+    (position.y <=margin)||(position.y >= margin + height)) {
+      Pair screenCenter = new Pair(margin + width/2, margin + height/2);
+      position = position.reflect(screenCenter);
 
-  ys = new int[]{(int)(position.y-radius),(int)position.y,(int)(position.y+radius),(int)(position.y+radius),(int)position.y};
-
-roundScreen();
-  Polygon poly = new Polygon(xs,ys,5);
-  AffineTransform at = AffineTransform.getRotateInstance(0,position.x,position.y);
-  myShape = at.createTransformedShape (poly);
-
-}
-
-public void roundScreen(){
-  if ((position.x<= margin)||(position.x>= margin+width)||
-  (position.y <=margin)||(position.y >= margin + height)) {
-    Pair screenCenter = new Pair(margin + width/2, margin + height/2);
-    position = position.reflect(screenCenter);
-
+    }
   }
-}
   public void drawShape(Graphics2D g2D){
     g2D.setPaint(Color.BLUE);
     g2D.fill(myShape);
@@ -169,8 +174,8 @@ public void roundScreen(){
 
 class Sphere{
   int height;
-int width;
-int margin;
+  int width;
+  int margin;
   Pair position;
   Pair velocity;
   double radius;
@@ -180,9 +185,9 @@ int margin;
 
   public Sphere(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
-        margin = initMargin;
-        width = initWidth;
-        height = initHeight;
+    margin = initMargin;
+    width = initWidth;
+    height = initHeight;
 
     // the postion of a sphere is its center
 
@@ -238,29 +243,31 @@ class Asteroid extends Sphere {
 
       dists[iVertex] = rand.nextDouble()*radius/4 + radius;
 
+    }
   }
-}
 
-public void updateShape(){
-  int iVertex;
+  public void updateShape(){
+    int iVertex;
 
-  for (iVertex = 0 ;iVertex < NumVertices ;iVertex ++ ) {
+    for (iVertex = 0 ;iVertex < NumVertices ;iVertex ++ ) {
 
-  xs[iVertex] = (int)(position.x + Math.cos(angles[iVertex])*dists[iVertex]);
-  ys[iVertex] = (int)(position.y + Math.sin(angles[iVertex])*dists[iVertex]);
-}
+      xs[iVertex] = (int)(position.x + Math.cos(angles[iVertex])*dists[iVertex]);
+      ys[iVertex] = (int)(position.y + Math.sin(angles[iVertex])*dists[iVertex]);
+    }
 
-Polygon poly = new Polygon(xs,ys,7);
-  AffineTransform at = AffineTransform.getRotateInstance(0,position.x,position.y);
-  myShape = at.createTransformedShape (poly);
+    Polygon poly = new Polygon(xs,ys,7);
+    AffineTransform at = AffineTransform.getRotateInstance(0,position.x,position.y);
+    myShape = at.createTransformedShape (poly);
 
-}
+  }
 
-public void update(World w, double time){
-  position = position.add(velocity.times(time));
-  updateShape();
+  public void update(World w, double time){
+    position = position.add(velocity.times(time));
+    updateShape();
+    // System.out.println("updated shape");
 
-}
+
+  }
   public void drawShape(Graphics2D g2D){
 
     g2D.setColor(Color.white);
@@ -270,9 +277,7 @@ public void update(World w, double time){
     // g2D.drawPolygon(xs,ys,NumVertices);
   }
 
-  public void collide(){
 
-  }
 
 
 
@@ -318,8 +323,8 @@ class World{
   LinkedDS<Asteroid> asteroids = new LinkedDS<Asteroid>();
   Planet planet;
   Ship ship;
-char charKeyPressed;
-Boolean removingAst = false;
+  char charKeyPressed;
+  Boolean removingAst = false;
 
   public World(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
@@ -327,9 +332,9 @@ Boolean removingAst = false;
     width = initWidth;
     height = initHeight;
 
-Asteroid ast = new Asteroid(width, height, margin, diff);
+    Asteroid ast = new Asteroid(width, height, margin, diff);
 
-asteroids.append(ast);
+    asteroids.append(ast);
 
 
 
@@ -344,29 +349,29 @@ asteroids.append(ast);
     // should paint planet first to set it in the back
 
     if (planet != null) {
-  planet.drawShape(g2D);
+      planet.drawShape(g2D);
 
-}
-
-
-if (asteroids.end!=null) {
-numAsteroids = asteroids.length();
-Node<Asteroid> iNode = asteroids.end;
-  for (int i = 0; i < numAsteroids; i ++){
-    Asteroid iAst = iNode.client;
-
-    System.out.println("gonna draw");
-    System.out.println(i +""+numAsteroids);
-    System.out.println(iAst.position.x);
+    }
 
 
-      iAst.drawShape(g2D);
+    if (asteroids.end!=null) {
+      numAsteroids = asteroids.length();
+      Node<Asteroid> iNode = asteroids.end;
+      for (int i = 0; i < numAsteroids; i ++){
+        Asteroid iAst = iNode.client;
+
+        // System.out.println("gonna draw");
+        // System.out.println(i +""+numAsteroids);
+        // System.out.println(iAst.position.x);
 
 
-    iNode = iNode.previous;
-  }
-}
-ship.drawShape(g2D);
+        iAst.drawShape(g2D);
+
+
+        iNode = iNode.previous;
+      }
+    }
+    ship.drawShape(g2D);
 
 
   }
@@ -374,17 +379,17 @@ ship.drawShape(g2D);
   public void updateSpheres(double time){
 
     if (asteroids.end!=null) {
-numAsteroids = asteroids.length();
-Node<Asteroid> iNode = asteroids.end;
+      numAsteroids = asteroids.length();
+      Node<Asteroid> iNode = asteroids.end;
       for (int i = 0; i < numAsteroids; i ++){
         Asteroid iAst = iNode.client;
 
-        System.out.println("gonna update");
-        System.out.println(i +""+numAsteroids);
-        System.out.println(iAst.position.x);
+        // System.out.println("gonna update");
+        // System.out.println(i +""+numAsteroids);
+        // System.out.println(iAst.position.x);
 
-          iAst.update(this,time);
-          // iNode.client.updateShape();
+        iAst.update(this,time);
+        // iNode.client.updateShape();
 
 
         iNode = iNode.previous;
@@ -392,8 +397,8 @@ Node<Asteroid> iNode = asteroids.end;
     }
 
     if (asteroids.end!=null) {
-numAsteroids = asteroids.length();
-Node<Asteroid> iNode = asteroids.end;
+      numAsteroids = asteroids.length();
+      Node<Asteroid> iNode = asteroids.end;
       for (int i = 0; i < numAsteroids; i ++){
         Asteroid iAst = iNode.client;
 
@@ -401,18 +406,18 @@ Node<Asteroid> iNode = asteroids.end;
         || (iAst.position.y - (height + margin) >= iAst.radius)){
 
           removingAst = true;
-          System.out.println("gonna remove");
+          // System.out.println("gonna remove");
           int index = numAsteroids - 1 -i ;
-          System.out.println(index + "" + numAsteroids);
+          // System.out.println(index + "" + numAsteroids);
 
           asteroids.remove(index);
           removingAst = false;
 
           // iNode = new Asteroid(width, height, margin, diff);
-          System.out.println("removed one");
+          // System.out.println("removed one");
           numAsteroids = asteroids.length();
 
-        System.out.println(+numAsteroids);
+          // System.out.println(+numAsteroids);
 
 
         }
@@ -425,29 +430,29 @@ Node<Asteroid> iNode = asteroids.end;
     if (planet != null) {
       planet.update(this,time);
       if ((margin - planet.position.x >= planet.radius) ||(planet.position.x - (width+margin) >= planet.radius)
-    || (planet.position.y - (height + margin) >= planet.radius)){
-      planet = null;
+      || (planet.position.y - (height + margin) >= planet.radius)){
+        planet = null;
 
-    }
+      }
     }
 
     ship.update(this,time,charKeyPressed);
 
 
-// for (int i = 0; i < numAsteroids; i ++){
-//   for (int j = i +1 ; i < numAsteroids; i ++){
-// Area areaI = new Area(iNode.myShape);
-// Area areaJ= new Area(asteroids[j].myShape);
-// areaI.intersect(areaJ);
-// if (areaI.isEmpty()== false) {
-//   iNode.collide();
-//   asteroids[j].collide();
-//
-//
-// }
-// }
-//     // System.out.println(charKeyPressed);
-//
+    // for (int i = 0; i < numAsteroids; i ++){
+    //   for (int j = i +1 ; i < numAsteroids; i ++){
+    // Area areaI = new Area(iNode.myShape);
+    // Area areaJ= new Area(asteroids[j].myShape);
+    // areaI.intersect(areaJ);
+    // if (areaI.isEmpty()== false) {
+    //   iNode.collide();
+    //   asteroids[j].collide();
+    //
+    //
+    // }
+    // }
+    //     // System.out.println(charKeyPressed);
+    //
   }
 
   public void updateKey(char charKeyPressed){
@@ -458,17 +463,111 @@ Node<Asteroid> iNode = asteroids.end;
     planet = new Planet(width, height, margin, diff);
   }
 
-public void addAsteroid(){
-  Asteroid ast = new Asteroid(width, height, margin, diff);
+  public void addAsteroid(){
+    Asteroid ast = new Asteroid(width, height, margin, diff);
 
-  asteroids.append(ast);
-  // ArrayList<Asteroid> temp = new ArrayList<Asteroid>(Arrays.asList(asteroids));
-  // temp.add(new Asteroid(width, height, margin, diff));
-  // asteroids = new Asteroid[temp.size()];
-  // asteroids = temp.toArray(asteroids);
-  //
-  System.out.println("add");
-}
+    asteroids.append(ast);
+
+
+    // System.out.println("add");
+  }
+
+  public void checkCollision(){
+    numAsteroids = asteroids.length();
+    ArrayList<Integer> gonnaCollide = new ArrayList<Integer>();
+
+    if ((numAsteroids > 1)&&(asteroids.end!=null)) {
+
+      // Don't start with the end because the end might have been just added withouut its shpaed being updated
+      Node<Asteroid> iNode = asteroids.end.previous;
+      for (int i = 1; i < numAsteroids; i ++){
+        int iIndex = numAsteroids - 1 -i ;
+
+        Asteroid iAst = iNode.client;
+
+
+        // System.out.println(iAst.position.x);
+        // System.out.println(iAst.myShape);
+
+        Area iArea = new Area(iAst.myShape);
+
+        Node<Asteroid> jNode = asteroids.end.previous;
+
+        for (int j = 1; j < numAsteroids; j ++){
+          int jIndex = numAsteroids - 1 -j ;
+
+          Asteroid jAst = jNode.client;
+          Area jArea = new Area(jAst.myShape);
+          iArea.intersect(jArea);
+          // System.out.println(iArea.isEmpty() + " "+ (iArea.equals(jArea)) );
+          // System.out.println(numAsteroids + " " + iIndex + " " + jIndex);
+          // we want A is false and B is false, which is equivalent to A or B is not true
+          if (!((iArea.equals(jArea))|| (iArea.isEmpty()) )) {
+            // System.out.println("gonna collide");
+
+            gonnaCollide.add(iIndex);
+            gonnaCollide.add(jIndex);
+
+
+
+            // if (iIndex > jIndex) {
+            //   asteroids.remove(iIndex);
+            //   asteroids.remove(jIndex);
+            // } else{
+            //   asteroids.remove(jIndex);
+            //   asteroids.remove(iIndex);
+            //
+            // }
+            // System.out.println(numAsteroids + " " + iIndex + " " + jIndex);
+
+
+
+
+          }
+
+          jNode = jNode.previous;
+
+        }
+
+
+
+        iNode = iNode.previous;
+      }
+    }
+    Set<Integer> set = new HashSet<Integer>();
+
+    for (int i =  0; i < gonnaCollide.size() ; i ++ ) {
+      set.add(gonnaCollide.get(i));
+
+    }
+
+    ArrayList<Integer> gonnaCollide1 = new ArrayList<Integer>();
+    Iterator<Integer> it = set.iterator();
+    while(it.hasNext()) {
+      int next = it.next();
+      gonnaCollide1.add(next);
+    }
+
+    int[] gonnaCollide2 = new int[gonnaCollide1.size()];
+    for (int i =  0; i < gonnaCollide2.length ; i ++ ) {
+      gonnaCollide2[i] = gonnaCollide1.get(i).intValue();
+    }
+    Arrays.sort(gonnaCollide2);
+
+    for (int i =  0; i < gonnaCollide2.length ; i ++ ) {
+      int index = gonnaCollide2[gonnaCollide2.length - 1 - i];
+      asteroids.remove(index);
+      // System.out.println(gonnaCollide.toString());
+      // System.out.println(gonnaCollide1.toString());
+      // System.out.println(Arrays.toString(gonnaCollide2));
+      //
+      // System.out.println("removed" + index);
+
+    }
+
+
+
+  }
 
 
 }
@@ -488,7 +587,8 @@ public class CindySpace extends JPanel implements KeyListener{
         // world.updateGravity(charKeyPressed);
         world.updateKey(charKeyPressed);
         world.updateSpheres(1.0 / (double)FPS);
-        System.out.println(world.removingAst);
+        // System.out.println(world.removingAst);
+        world.checkCollision();
 
         charKeyPressed = 'n';
         repaint();
@@ -507,44 +607,44 @@ public class CindySpace extends JPanel implements KeyListener{
     class KeepPlanetComing implements Runnable{
       public void run()
       {
-      while(true){
-        world.renewPlanet();
-        try{
-          Thread.sleep(30000/diff);
+        while(true){
+          world.renewPlanet();
+          try{
+            Thread.sleep(30000/diff);
+          }
+          catch(InterruptedException e){
+          }
         }
-        catch(InterruptedException e){
-                }
+      }
+    }
+
+    class KeepAsteroidsComing implements Runnable{
+      public void run()
+      {
+
+        while(true){
+          if (world.removingAst != true) {
+            world.addAsteroid();
+
+          }
+
+
+          try{
+            Thread.sleep(500/diff);
+
+          }
+          catch(InterruptedException e){
+          }
         }
+      }
     }
-  }
-
-  class KeepAsteroidsComing implements Runnable{
-    public void run()
-    {
-
-      while(true){
-      if (world.removingAst != true) {
-        world.addAsteroid();
-
-      }
-
-
-    try{
-      Thread.sleep(3000/diff);
-
-    }
-      catch(InterruptedException e){
-      }
-      }
-  }
-}
 
 
 
     public void keyPressed(KeyEvent e) {
       char c=e.getKeyChar();
       System.out.println("You pressed down: " + c);
-charKeyPressed = c;
+      charKeyPressed = c;
     }
     public void keyReleased(KeyEvent e) {
       char c=e.getKeyChar();
@@ -593,11 +693,11 @@ charKeyPressed = c;
 
       world.drawSpheres(g2D);
 
-      g2D.setColor(Color.blue);
-      g2D.fillRect(0,0,WIDTH + 2*MARGIN,MARGIN);
-      g2D.fillRect(0,0,MARGIN,HEIGHT + 2*MARGIN);
-      g2D.fillRect(WIDTH + MARGIN,0,MARGIN,HEIGHT + 2*MARGIN);
-      g2D.fillRect(0,HEIGHT + MARGIN,WIDTH + 2*MARGIN,MARGIN);
+      // g2D.setColor(Color.blue);
+      // g2D.fillRect(0,0,WIDTH + 2*MARGIN,MARGIN);
+      // g2D.fillRect(0,0,MARGIN,HEIGHT + 2*MARGIN);
+      // g2D.fillRect(WIDTH + MARGIN,0,MARGIN,HEIGHT + 2*MARGIN);
+      // g2D.fillRect(0,HEIGHT + MARGIN,WIDTH + 2*MARGIN,MARGIN);
 
     }
 
