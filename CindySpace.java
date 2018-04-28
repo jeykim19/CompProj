@@ -86,10 +86,10 @@ int[] ys;
     myShape = at.createTransformedShape (myShape);
   }
   public void update(World w, double time, char charKeyPressed){
-    Pair left = new Pair(-200.0, 0.0);
-    Pair right = new Pair(200.0, 0.0);
-    Pair down = new Pair(0.0, 200.0);
-    Pair up = new Pair(0.0, -200.0);
+    Pair left = new Pair(-500.0, 0.0);
+    Pair right = new Pair(500.0, 0.0);
+    Pair down = new Pair(0.0, 500.0);
+    Pair up = new Pair(0.0, -500.0);
     Pair noAcc = new Pair(0.0, 0.0);
     double leftTurn = -Math.PI/1;
     double rightTurn = Math.PI/1;
@@ -176,15 +176,15 @@ int margin;
   double radius;
   int diff;
   Shape myShape;
+  Random rand = new Random();
+
   public Sphere(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
         margin = initMargin;
         width = initWidth;
         height = initHeight;
-    Random rand = new Random();
 
     // the postion of a sphere is its center
-  position = new Pair(rand.nextDouble()*width + margin,0.0);
 
   }
   public void update(World w, double time){
@@ -218,6 +218,8 @@ class Asteroid extends Sphere {
   public Asteroid(int initWidth, int initHeight,int initMargin, int initDiff){
 
     super(initWidth, initHeight, initMargin, initDiff);
+    position = new Pair(rand.nextDouble()*width + margin,0.0);
+
     Random rand = new Random();
     angle = Math.PI/NumAxis*rand.nextInt(NumAxis);
     speed = (double)(diff*100);
@@ -277,9 +279,12 @@ public void update(World w, double time){
 }
 
 class Planet extends Sphere{
+  // planet radius should always be less than margin so it doesn't suddely appear in the space
   double radius = 170 ;
   public Planet(int initWidth, int initHeight,int initMargin, int initDiff){
     super(initWidth, initHeight, initMargin, initDiff);
+    position = new Pair(rand.nextDouble()*width + margin, -70.0);
+
     velocity = new Pair(0.0, (double)diff*50);
   }
   public void drawShape(Graphics2D g2D){
@@ -471,7 +476,7 @@ public void addAsteroid(){
 public class CindySpace extends JPanel implements KeyListener{
   public static final int WIDTH = 1024 ;
   public static final int HEIGHT = 768 ;
-  public static final int MARGIN = 200;
+  public static final int MARGIN = 100;
   public static final int FPS = 60;
   public int diff = 1;
   World world;
