@@ -121,7 +121,7 @@ class Asteroid extends Sphere {
 }
     g.drawPolygon(xs,ys,NumVertices);
   }
- 
+
 
 
 }
@@ -161,8 +161,8 @@ class Debris extends Asteroid{
 
   }
     }
-  
-    
+
+
     public void draw(Graphics g){
 
     g.setColor(Color.white);
@@ -175,8 +175,8 @@ class Debris extends Asteroid{
 
 
     g.drawPolygon(xs,ys,NumVertices);
-    
-  
+
+
 }
 class World{
   int height;
@@ -203,7 +203,7 @@ Pair acceleration;
 
     asteroids  = new Asteroid[numAsteroids];
     crushed= new Debris[5];
-    
+
     for (int i = 0; i < numAsteroids; i ++)
     {
       asteroids[i] = new Asteroid(width, height, margin, diff);
@@ -211,7 +211,7 @@ Pair acceleration;
     for (int i=0; i< 5; i++){
 	crushed[i]=new Debris(width, height, margin, diff,0.0,0.0);
     }
-    
+
     planet = new Planet(width, height, margin, diff);
 
   }
@@ -398,3 +398,4 @@ public class Destroyed extends JPanel{
 
 
   }
+}

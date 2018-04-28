@@ -7,15 +7,19 @@ import java.awt.Graphics2D;
 import java.awt.Dimension;
 import java.awt.Polygon;
 import java.awt.Shape;
-
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+
 
 
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.lang.Math;
-
 
 class Pair{
   public double x;
@@ -53,23 +57,19 @@ class Pair{
   }
 }
 
-class Ship{
-  int height;
-int width;
-int margin;
-  Pair position;
-  Pair velocity = new Pair(0.0,0.0);
+class Ship extends Sphere{
   Pair acceleration = new Pair(0.0,0.0);
   double angle = 0.0;
   double rotation = 0.0;
   double radius = 20.0;
-  int diff;
-  Shape shipShape;
 int[] xs;
 int[] ys;
 
 
-  public Ship(int initWidth, int initHeight,int initMargin, int initDiff){
+  public Ship (int initWidth, int initHeight,int initMargin, int initDiff){
+    super(initWidth, initHeight, initMargin, initDiff);
+    velocity = new Pair(0.0,0.0);
+
     diff = initDiff;
         margin = initMargin;
         width = initWidth;
@@ -79,19 +79,17 @@ int[] ys;
     // the postion of a sphere is its center
   position = new Pair(0.5*width + margin, height+margin-30.0);
 
-  this.updateShape();
-
 
   }
-  public void rotate(){
+  public void rotateShape(){
     AffineTransform at = AffineTransform.getRotateInstance(angle,position.x,position.y);
-    shipShape = at.createTransformedShape (shipShape);
+    myShape = at.createTransformedShape (myShape);
   }
   public void update(World w, double time, char charKeyPressed){
-    Pair left = new Pair(-200.0, 0.0);
-    Pair right = new Pair(200.0, 0.0);
-    Pair down = new Pair(0.0, 200.0);
-    Pair up = new Pair(0.0, -200.0);
+    Pair left = new Pair(-500.0, 0.0);
+    Pair right = new Pair(500.0, 0.0);
+    Pair down = new Pair(0.0, 500.0);
+    Pair up = new Pair(0.0, -500.0);
     Pair noAcc = new Pair(0.0, 0.0);
     double leftTurn = -Math.PI/1;
     double rightTurn = Math.PI/1;
@@ -128,9 +126,10 @@ velocity = velocity.add(acceleration.times(time));
     position = position.add(velocity.times(time));
     angle = angle + rotation * time;
 
-this.updateShape();
 
-  this.rotate();
+updateShape();
+
+rotateShape();
 
 
 
@@ -144,7 +143,7 @@ public void updateShape(){
 roundScreen();
   Polygon poly = new Polygon(xs,ys,5);
   AffineTransform at = AffineTransform.getRotateInstance(0,position.x,position.y);
-  shipShape = at.createTransformedShape (poly);
+  myShape = at.createTransformedShape (poly);
 
 }
 
@@ -156,10 +155,10 @@ public void roundScreen(){
 
   }
 }
-  public void draw(Graphics2D g2D){
+  public void drawShape(Graphics2D g2D){
     g2D.setPaint(Color.BLUE);
-    g2D.fill(shipShape);
-    // g2D.drawPolygon(shipShape.xpoints,shipShape.ypoints,5);
+    g2D.fill(myShape);
+    // g2D.drawShapePolygon(myShape.xpoints,myShape.ypoints,5);
 
   }
 
@@ -176,20 +175,23 @@ int margin;
   Pair velocity;
   double radius;
   int diff;
+  Shape myShape;
+  Random rand = new Random();
+
   public Sphere(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
         margin = initMargin;
         width = initWidth;
         height = initHeight;
-    Random rand = new Random();
 
     // the postion of a sphere is its center
-  position = new Pair(rand.nextDouble()*width + margin,0.0);
 
   }
   public void update(World w, double time){
     position = position.add(velocity.times(time));
   }
+
+
 
   // public void setPosition(Pair p){
   //   position = p;
@@ -214,11 +216,14 @@ class Asteroid extends Sphere {
   int[] ys = new int [NumVertices];
 
   public Asteroid(int initWidth, int initHeight,int initMargin, int initDiff){
+
     super(initWidth, initHeight, initMargin, initDiff);
+    position = new Pair(rand.nextDouble()*width + margin,0.0);
+
     Random rand = new Random();
     angle = Math.PI/NumAxis*rand.nextInt(NumAxis);
     speed = (double)(diff*100);
-    super.velocity = new Pair(Math.cos(angle)*speed, Math.sin(angle)*speed);
+    velocity = new Pair(Math.cos(angle)*speed, Math.sin(angle)*speed);
 
 
     // Random rand = new Random();
@@ -236,17 +241,37 @@ class Asteroid extends Sphere {
   }
 }
 
-  public void draw(Graphics2D g2D){
+public void updateShape(){
+  int iVertex;
+
+  for (iVertex = 0 ;iVertex < NumVertices ;iVertex ++ ) {
+
+  xs[iVertex] = (int)(position.x + Math.cos(angles[iVertex])*dists[iVertex]);
+  ys[iVertex] = (int)(position.y + Math.sin(angles[iVertex])*dists[iVertex]);
+}
+
+Polygon poly = new Polygon(xs,ys,7);
+  AffineTransform at = AffineTransform.getRotateInstance(0,position.x,position.y);
+  myShape = at.createTransformedShape (poly);
+
+}
+
+public void update(World w, double time){
+  position = position.add(velocity.times(time));
+  updateShape();
+
+}
+  public void drawShape(Graphics2D g2D){
 
     g2D.setColor(Color.white);
-    int iVertex;
+    g2D.draw(myShape);
 
-    for (iVertex = 0 ;iVertex < NumVertices ;iVertex ++ ) {
 
-    xs[iVertex] = (int)(position.x + Math.cos(angles[iVertex])*dists[iVertex]);
-    ys[iVertex] = (int)(position.y + Math.sin(angles[iVertex])*dists[iVertex]);
-}
-    g2D.drawPolygon(xs,ys,NumVertices);
+    // g2D.drawPolygon(xs,ys,NumVertices);
+  }
+
+  public void collide(){
+
   }
 
 
@@ -254,16 +279,31 @@ class Asteroid extends Sphere {
 }
 
 class Planet extends Sphere{
-  double radius = 170;
+  // planet radius should always be less than margin so it doesn't suddely appear in the space
+  double radius = 170 ;
   public Planet(int initWidth, int initHeight,int initMargin, int initDiff){
     super(initWidth, initHeight, initMargin, initDiff);
-    super.velocity = new Pair(0.0, (double)diff*50);
+    position = new Pair(rand.nextDouble()*width + margin, -70.0);
+
+    velocity = new Pair(0.0, (double)diff*50);
   }
-  public void draw(Graphics2D g2D){
+  public void drawShape(Graphics2D g2D){
 
-    g2D.setColor(Color.red);
-    g2D.fillOval((int)(position.x - radius), (int)(position.y - radius), (int)(2*radius), (int)(2*radius));
+    g2D.setPaint(Color.red);
+    g2D.fill(myShape);
 
+    // g2D.fillOval((int)(position.x - radius), (int)(position.y - radius), (int)(2*radius), (int)(2*radius));
+
+  }
+
+  public void updateShape(){
+    myShape = new Ellipse2D.Double(position.x-radius, position.y-radius, radius*2, radius*2);
+
+  }
+
+  public void update(World w, double time){
+    position = position.add(velocity.times(time));
+    updateShape();
   }
 
 
@@ -275,26 +315,23 @@ class World{
   int diff;
 
   int numAsteroids;
-  Asteroid asteroids[];
+  LinkedDS<Asteroid> asteroids = new LinkedDS<Asteroid>();
   Planet planet;
   Ship ship;
 char charKeyPressed;
+Boolean removingAst = false;
 
   public World(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
     margin = initMargin;
     width = initWidth;
     height = initHeight;
-    numAsteroids = diff * 5;
+
+Asteroid ast = new Asteroid(width, height, margin, diff);
+
+asteroids.append(ast);
 
 
-
-    asteroids  = new Asteroid[numAsteroids];
-
-    for (int i = 0; i < numAsteroids; i ++)
-    {
-      asteroids[i] = new Asteroid(width, height, margin, diff);
-    }
 
     planet = new Planet(width, height, margin, diff);
 
@@ -307,30 +344,83 @@ char charKeyPressed;
     // should paint planet first to set it in the back
 
     if (planet != null) {
-  planet.draw(g2D);
+  planet.drawShape(g2D);
 
 }
-    for (int i = 0; i < numAsteroids; i++){
-      asteroids[i].draw(g2D);
 
-    }
 
-ship.draw(g2D);
+if (asteroids.end!=null) {
+numAsteroids = asteroids.length();
+Node<Asteroid> iNode = asteroids.end;
+  for (int i = 0; i < numAsteroids; i ++){
+    Asteroid iAst = iNode.client;
+
+    System.out.println("gonna draw");
+    System.out.println(i +""+numAsteroids);
+    System.out.println(iAst.position.x);
+
+
+      iAst.drawShape(g2D);
+
+
+    iNode = iNode.previous;
+  }
+}
+ship.drawShape(g2D);
 
 
   }
 
   public void updateSpheres(double time){
 
+    if (asteroids.end!=null) {
+numAsteroids = asteroids.length();
+Node<Asteroid> iNode = asteroids.end;
+      for (int i = 0; i < numAsteroids; i ++){
+        Asteroid iAst = iNode.client;
 
-    for (int i = 0; i < numAsteroids; i ++){
-      asteroids[i].update(this,time);
-      if ((margin - asteroids[i].position.x >= asteroids[i].radius) ||(asteroids[i].position.x - (width+margin) >= asteroids[i].radius)
-      || (asteroids[i].position.y - (height + margin) >= asteroids[i].radius)){
-        asteroids[i] = new Asteroid(width, height, margin, diff);
+        System.out.println("gonna update");
+        System.out.println(i +""+numAsteroids);
+        System.out.println(iAst.position.x);
+
+          iAst.update(this,time);
+          // iNode.client.updateShape();
+
+
+        iNode = iNode.previous;
+      }
+    }
+
+    if (asteroids.end!=null) {
+numAsteroids = asteroids.length();
+Node<Asteroid> iNode = asteroids.end;
+      for (int i = 0; i < numAsteroids; i ++){
+        Asteroid iAst = iNode.client;
+
+        if ((margin - iAst.position.x >= iAst.radius) ||(iAst.position.x - (width+margin) >= iAst.radius)
+        || (iAst.position.y - (height + margin) >= iAst.radius)){
+
+          removingAst = true;
+          System.out.println("gonna remove");
+          int index = numAsteroids - 1 -i ;
+          System.out.println(index + "" + numAsteroids);
+
+          asteroids.remove(index);
+          removingAst = false;
+
+          // iNode = new Asteroid(width, height, margin, diff);
+          System.out.println("removed one");
+          numAsteroids = asteroids.length();
+
+        System.out.println(+numAsteroids);
+
+
+        }
+        iNode = iNode.previous;
 
       }
     }
+
 
     if (planet != null) {
       planet.update(this,time);
@@ -343,8 +433,21 @@ ship.draw(g2D);
 
     ship.update(this,time,charKeyPressed);
 
-    // System.out.println(charKeyPressed);
 
+// for (int i = 0; i < numAsteroids; i ++){
+//   for (int j = i +1 ; i < numAsteroids; i ++){
+// Area areaI = new Area(iNode.myShape);
+// Area areaJ= new Area(asteroids[j].myShape);
+// areaI.intersect(areaJ);
+// if (areaI.isEmpty()== false) {
+//   iNode.collide();
+//   asteroids[j].collide();
+//
+//
+// }
+// }
+//     // System.out.println(charKeyPressed);
+//
   }
 
   public void updateKey(char charKeyPressed){
@@ -355,6 +458,17 @@ ship.draw(g2D);
     planet = new Planet(width, height, margin, diff);
   }
 
+public void addAsteroid(){
+  Asteroid ast = new Asteroid(width, height, margin, diff);
+
+  asteroids.append(ast);
+  // ArrayList<Asteroid> temp = new ArrayList<Asteroid>(Arrays.asList(asteroids));
+  // temp.add(new Asteroid(width, height, margin, diff));
+  // asteroids = new Asteroid[temp.size()];
+  // asteroids = temp.toArray(asteroids);
+  //
+  System.out.println("add");
+}
 
 
 }
@@ -362,7 +476,7 @@ ship.draw(g2D);
 public class CindySpace extends JPanel implements KeyListener{
   public static final int WIDTH = 1024 ;
   public static final int HEIGHT = 768 ;
-  public static final int MARGIN = 200;
+  public static final int MARGIN = 100;
   public static final int FPS = 60;
   public int diff = 1;
   World world;
@@ -374,6 +488,8 @@ public class CindySpace extends JPanel implements KeyListener{
         // world.updateGravity(charKeyPressed);
         world.updateKey(charKeyPressed);
         world.updateSpheres(1.0 / (double)FPS);
+        System.out.println(world.removingAst);
+
         charKeyPressed = 'n';
         repaint();
         try{
@@ -392,16 +508,37 @@ public class CindySpace extends JPanel implements KeyListener{
       public void run()
       {
       while(true){
-        world.updateKey(charKeyPressed);
         world.renewPlanet();
-        repaint();
         try{
           Thread.sleep(30000/diff);
         }
-        catch(InterruptedException e){}
+        catch(InterruptedException e){
+                }
         }
     }
   }
+
+  class KeepAsteroidsComing implements Runnable{
+    public void run()
+    {
+
+      while(true){
+      if (world.removingAst != true) {
+        world.addAsteroid();
+
+      }
+
+
+    try{
+      Thread.sleep(3000/diff);
+
+    }
+      catch(InterruptedException e){
+      }
+      }
+  }
+}
+
 
 
     public void keyPressed(KeyEvent e) {
@@ -430,8 +567,11 @@ charKeyPressed = c;
       this.setPreferredSize(new Dimension(WIDTH+ 2*MARGIN, HEIGHT+ 2*MARGIN));
       Thread mainThread = new Thread(new Runner());
       Thread planetThread = new Thread(new KeepPlanetComing());
+      Thread asteroidThread = new Thread(new KeepAsteroidsComing());
+
       mainThread.start();
       planetThread.start();
+      asteroidThread.start();
     }
 
     public static void main(String[] args){
