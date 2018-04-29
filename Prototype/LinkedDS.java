@@ -4,6 +4,7 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
 
   // your code here
   public Node<E> end;
+  public int length = 0;
   public  LinkedDS(){
     end = null;
   }
@@ -11,10 +12,11 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
     Node toAdd = new Node(toAppend);
     toAdd.previous = end;
     end = toAdd;
+    length += 1;
   }
   public E peek(){
     if (end!= null){
-        return end.client;
+        return end.num;
 
       } else{
         return null;
@@ -25,8 +27,9 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
   public E pop(){
     E toReturn = null;
     if (end!= null){
-      toReturn = end.client;
+      toReturn = end.num;
       end = end.previous;
+      length -= 1;
     }
     return toReturn;
   }
@@ -35,7 +38,7 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
     String allInts = "";
     Node n = end;
     while (n != null){
-      allInts = n.client + " " + allInts;
+      allInts = n.num + " " + allInts;
       n = n.previous;
 
 
@@ -44,46 +47,76 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
 
   }
   public int length(){
-    int intsLength = 0;
-    Node n = end;
-    while(n != null){
-      intsLength ++;
-      n = n.previous;
-    }
-    return intsLength;
+    return length;
+    // int intsLength = 0;
+    // Node n = end;
+    // while(n != null){
+    //   intsLength ++;
+    //   n = n.previous;
+    // }
+    // return intsLength;
 
 
   }
+  public void remove1 (E element){
+    if (length()==0){
+       System.out.println("This list is empty.");
+     }
 
+     int count=0;
+     Node <E> n=end;
+     Node <E> p=end;
+     while (n!=null){
+       count=count+1;
+
+       if (n.num == element){
+ 	  if ((count-1)>0){
+ 	      while ((count-1)>0){
+ 		       p=p.previous;
+ 		        count=count-1;
+ 	      }
+ 	      p=p.previous.previous;
+ 	      length=length-1;
+ 	  }
+ 	  else if ((count-1)==0){
+ 	      end=end.previous;
+ 	      length=length-1;
+ 	  }
+       }
+       n=n.previous;
+     }
+
+
+  }
   public void remove(int index){
 
     if ((index<length())&&(index>-1)){
-      int iIndex = length()-1;
-      Node afterRemoved = end;
-      if (iIndex == index) {
-        end = end.previous;
+      int iIndex = 1;
+      Node removed = end;
+      while(iIndex != length() - 1-index){
+      removed = removed.previous;
+      iIndex += 1;
 
-      }else{
-        while(iIndex != index + 1){
-        afterRemoved = afterRemoved.previous;
-        iIndex -= 1;
-
-
-        }
-        afterRemoved.previous = afterRemoved.previous.previous;
 
       }
-      }
-       else {
+      removed.previous = removed.previous.previous;
+      length -= 1;
+
+
+    } else {
       throw new java.lang.Error("No node indexed");
 
     }
-
-
-
-
   }
-
+  public Node<E> get (E element){
+    Node<E> n=end;
+    while (n!=null){
+      if (n.num==element){
+        return n;
+      }
+    }
+    return null;
+  }
 
 
 
@@ -93,9 +126,9 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
 
 
  class Node<E>{
- E client;
+ E num;
  Node previous;
- public Node(E client){
-   this.client = client;
+ public Node(E num){
+   this.num = num;
  }
  }
