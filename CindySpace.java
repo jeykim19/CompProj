@@ -489,7 +489,6 @@ class World{
         // System.out.println(iAst.position.x);
         // System.out.println(iAst.myShape);
 
-        Area iArea = new Area(iAst.myShape);
 
         Node<Asteroid> jNode = asteroids.end.previous;
 
@@ -497,6 +496,10 @@ class World{
           int jIndex = numAsteroids - 1 -j ;
 
           Asteroid jAst = jNode.client;
+
+          // keep iArea inside the inner loop so it's updated as the inner loop run
+          Area iArea = new Area(iAst.myShape);
+
           Area jArea = new Area(jAst.myShape);
           iArea.intersect(jArea);
           // System.out.println(iArea.isEmpty() + " "+ (iArea.equals(jArea)) );
@@ -508,26 +511,13 @@ class World{
             gonnaCollide.add(iIndex);
             gonnaCollide.add(jIndex);
 
-
-
-            // if (iIndex > jIndex) {
-            //   asteroids.remove(iIndex);
-            //   asteroids.remove(jIndex);
-            // } else{
-            //   asteroids.remove(jIndex);
-            //   asteroids.remove(iIndex);
-            //
-            // }
-            // System.out.println(numAsteroids + " " + iIndex + " " + jIndex);
-
-
-
-
           }
 
           jNode = jNode.previous;
 
         }
+
+
 
 
 
@@ -604,6 +594,7 @@ public class CindySpace extends JPanel implements KeyListener{
       // timer.schedule(world.renewPlanet(),0,10000/diff);
 
     }
+
     class KeepPlanetComing implements Runnable{
       public void run()
       {
