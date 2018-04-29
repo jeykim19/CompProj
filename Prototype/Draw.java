@@ -19,8 +19,8 @@ public class Draw{
     public static void drawSpaceshipChain(Graphics2D g, LinkedDS<Spaceship> ships){
         Node<Spaceship> n = ships.end;
         while(n != null){
-            n.element.draw(g);
-            n = n.parent;
+            n.num.draw(g);
+            n = n.previous;
         }
     }
 

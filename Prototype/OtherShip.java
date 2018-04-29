@@ -34,13 +34,12 @@ public class OtherShip extends Spaceship{
         hasBeenCaptured = true;
         //parentShip = captor;
         capturedShips.append(this);
-        freeShips.remove(this);
-        //Something is SERIOUSLY wrong if the length of captured ships is not positive at this point
+        freeShips.remove1(this);
         if(capturedShips.length() == 1){
             attach(motherShip);
         }
         else{
-            attach(capturedShips.end.element);
+            attach(capturedShips.end.num);
         }
     }
 
@@ -62,7 +61,7 @@ public class OtherShip extends Spaceship{
         if(capturedShips.length() == 1){
             return motherShip;
         }
-        return capturedShips.get(this).parent.element;
+        return capturedShips.get(this).previous.num;
     }
 
    @Override
