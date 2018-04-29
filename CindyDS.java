@@ -1,10 +1,8 @@
-//package oc;
-
-public class LinkedDS<E> implements GenericOrderedCollection<E>{
+public class CindyDS<E> implements CindyCollection<E>{
 
   // your code here
   public Node<E> end;
-  public  LinkedDS(){
+  public  CindyDS(){
     end = null;
   }
   public void append(E toAppend){
@@ -59,11 +57,11 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
 
     if ((index<length())&&(index>-1)){
       int iIndex = length()-1;
+      Node afterRemoved = end;
       if (iIndex == index) {
         end = end.previous;
 
       }else{
-        Node afterRemoved = end;
         while(iIndex != index + 1){
         afterRemoved = afterRemoved.previous;
         iIndex -= 1;
@@ -80,66 +78,30 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
     }
   }
 
-  public E get(int index){
 
-    if ((index<length())&&(index>-1)){
-      int iIndex = length()-1;
-      if (iIndex == index) {
-E target = end.client;
-      }else{
-        Node afterTarget = end;
-        while(iIndex != index + 1){
-        afterTarget = afterTarget.previous;
-        iIndex -= 1;
+public E get(int index){
+E target;
+  if ((index<length())&&(index>-1)){
+    int iIndex = length()-1;
+    if (iIndex == index) {
+target = end.client;
+    }else{
+      Node<E> targetNode = end;
+      while(iIndex != index){
+      targetNode = targetNode.previous;
+      iIndex -= 1;
 
-
-        }
-        afterTarget.previous = afterTarget.previous.previous;
 
       }
-      }
-       else {
-      throw new java.lang.Error("No node indexed");
-
+      target = targetNode.client;
+    } return target;
     }
+     else {
+    throw new java.lang.Error("No node indexed");
+
   }
-
-
-
-
-  public void remove(E element){
-    if (length()==0){
-      System.out.println("This list is empty.");
-    }
-
-    int counter=0;
-    Node <E> n=end; //Node<E> n= end;
-    Node <E> p=end; //Node<E> p=end;
-    while (n!=null){
-      counter=counter+1;
-
-      if (n.element == element){  //replace value with element in actual one
-	  if ((counter-1)>0){
-	      while ((count-1)>0){
-		  p=p.previous; //replace nextSpace with previous
-		  counter=counter-1;
-	      }
-	      p=p.previous.previous;
-	  }
-	  else if ((counter-1)==0){
-	      end=end.previous;
-	  }
-      }
-      n=n.previous;
-    }
-  }
-
-
-
-
-
-
- }
+}
+}
 
 
  class Node<E>{

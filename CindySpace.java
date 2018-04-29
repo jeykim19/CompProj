@@ -173,13 +173,13 @@ class Ship extends Sphere{
 
 
 class Sphere{
-  int height;
-  int width;
-  int margin;
+  static int height;
+  static int width;
+  static int margin;
+  static int diff;
   Pair position;
   Pair velocity;
   double radius;
-  int diff;
   Shape myShape;
   Random rand = new Random();
 
@@ -192,11 +192,38 @@ class Sphere{
     // the postion of a sphere is its center
 
   }
+
+  public Sphere(){
+
+  }
   public void update(World w, double time){
     position = position.add(velocity.times(time));
   }
 
+  public boolean checkDeath(){
+    if ((margin - position.x >= radius) ||(position.x - (width+margin) >= radius)
+    || (position.y - (height + margin) >= radius)){
+      // if ((margin - iAst.position.x >= iAst.radius) ||(iAst.position.x - (width+margin) >= iAst.radius)
+      //     || (iAst.position.y - (height + margin) >= iAst.radius)){
+      // removingAst = true;
+      // // System.out.println("gonna remove");
+      // int index = numAsteroids - 1 -i ;
+      // // System.out.println(index + "" + numAsteroids);
+      //
+      // asteroids.remove(index);
+      // removingAst = false;
+      //
+      // // iNode = new Asteroid(width, height, margin, diff);
+      // // System.out.println("removed one");
+      // numAsteroids = asteroids.length();
 
+      // System.out.println(+numAsteroids);
+      return true;
+
+    } else {
+      return false;
+    }
+  }
 
   // public void setPosition(Pair p){
   //   position = p;
@@ -220,12 +247,13 @@ class Asteroid extends Sphere {
   int[] xs = new int [NumVertices];
   int[] ys = new int [NumVertices];
 
-  public Asteroid(int initWidth, int initHeight,int initMargin, int initDiff){
+  public Asteroid(){
+    // public Asteroid(int initWidth, int initHeight,int initMargin, int initDiff){
 
-    super(initWidth, initHeight, initMargin, initDiff);
+    // super(initWidth, initHeight, initMargin, initDiff);
+    super();
     position = new Pair(rand.nextDouble()*width + margin,0.0);
 
-    Random rand = new Random();
     angle = Math.PI/NumAxis*rand.nextInt(NumAxis);
     speed = (double)(diff*100);
     velocity = new Pair(Math.cos(angle)*speed, Math.sin(angle)*speed);
@@ -277,7 +305,28 @@ class Asteroid extends Sphere {
     // g2D.drawPolygon(xs,ys,NumVertices);
   }
 
+}
 
+class Debris extends Asteroid{
+  public Debris(double x, double y){
+
+    super();
+    position=new Pair (x,y);
+    angle = Math.PI/5*rand.nextInt(100);
+    velocity = new Pair(Math.cos(angle)*speed*2, Math.sin(angle)*speed*2);
+    int iVertex;
+    for (iVertex = 0 ;iVertex < NumVertices ;iVertex ++ ) {
+      // if (iVertex == 0) {
+      //   angles[iVertex] = rand.nextDouble()*2*Math.PI;
+      // } else{
+      //   angles[iVertex] = rand.nextDouble()*(2*Math.PI-angles[iVertex -1])+angles[iVertex -1];
+      // }
+      angles[iVertex] = 2*Math.PI/NumVertices*iVertex;
+
+      dists[iVertex] = (rand.nextDouble()*radius/4+rand.nextDouble()*radius)/2 ;
+
+    }
+  }
 
 
 
@@ -286,8 +335,10 @@ class Asteroid extends Sphere {
 class Planet extends Sphere{
   // planet radius should always be less than margin so it doesn't suddely appear in the space
   double radius = 170 ;
-  public Planet(int initWidth, int initHeight,int initMargin, int initDiff){
-    super(initWidth, initHeight, initMargin, initDiff);
+  public Planet(){
+    super();
+    // public Planet(int initWidth, int initHeight,int initMargin, int initDiff){
+    //   super(initWidth, initHeight, initMargin, initDiff);
     position = new Pair(rand.nextDouble()*width + margin, -70.0);
 
     velocity = new Pair(0.0, (double)diff*50);
@@ -320,33 +371,36 @@ class World{
   int diff;
 
   int numAsteroids;
-  LinkedDS<Asteroid> asteroids = new LinkedDS<Asteroid>();
+  CindyDS<Asteroid> asteroids = new CindyDS<Asteroid>();
   Planet planet;
   Ship ship;
   char charKeyPressed;
   Boolean removingAst = false;
+  CindyDS<Debris> allDebris= new CindyDS<Debris>();
 
   public World(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
     margin = initMargin;
     width = initWidth;
     height = initHeight;
+    ship = new Ship(width, height, margin, diff);
 
-    Asteroid ast = new Asteroid(width, height, margin, diff);
+    Asteroid ast = new Asteroid();
 
     asteroids.append(ast);
 
 
 
-    planet = new Planet(width, height, margin, diff);
+    planet = new Planet();
 
-    ship = new Ship(width, height, margin, diff);
 
   }
 
   public void drawSpheres(Graphics2D g2D){
 
     // should paint planet first to set it in the back
+    drawList(asteroids, g2D);
+    drawList(allDebris, g2D);
 
     if (planet != null) {
       planet.drawShape(g2D);
@@ -354,83 +408,75 @@ class World{
     }
 
 
-    if (asteroids.end!=null) {
-      numAsteroids = asteroids.length();
-      Node<Asteroid> iNode = asteroids.end;
+
+    ship.drawShape(g2D);
+
+
+  }
+
+  public void drawList(CindyDS list, Graphics2D g2D){
+    if (list.end!=null) {
+      numAsteroids = list.length();
+      Node<Asteroid> iNode = list.end;
       for (int i = 0; i < numAsteroids; i ++){
-        Asteroid iAst = iNode.client;
+        Asteroid iClient = iNode.client;
 
         // System.out.println("gonna draw");
         // System.out.println(i +""+numAsteroids);
         // System.out.println(iAst.position.x);
 
 
-        iAst.drawShape(g2D);
+        iClient.drawShape(g2D);
 
 
         iNode = iNode.previous;
       }
     }
-    ship.drawShape(g2D);
+  }
+
+  public void updateList(CindyDS list,double time){
+    if (list.end!=null) {
+      numAsteroids = list.length();
+      Node<Asteroid> iNode = list.end;
+      for (int i = 0; i < numAsteroids; i ++){
+        Asteroid iClient = iNode.client;
+
+        // System.out.println("gonna draw");
+        // System.out.println(i +""+numAsteroids);
+        // System.out.println(iAst.position.x);
 
 
+        iClient.update(this,time);
+        // iNode.client.updateShape();
+
+        if (iClient.checkDeath()) {
+          int index = numAsteroids - 1 -i ;
+          removingAst = true;
+          list.remove(index);
+          removingAst = false;
+
+
+        }
+
+        iNode = iNode.previous;
+      }
+    }
   }
 
   public void updateSpheres(double time){
 
-    if (asteroids.end!=null) {
-      numAsteroids = asteroids.length();
-      Node<Asteroid> iNode = asteroids.end;
-      for (int i = 0; i < numAsteroids; i ++){
-        Asteroid iAst = iNode.client;
-
-        // System.out.println("gonna update");
-        // System.out.println(i +""+numAsteroids);
-        // System.out.println(iAst.position.x);
-
-        iAst.update(this,time);
-        // iNode.client.updateShape();
+    updateList(asteroids,time);
+    updateList(allDebris,time);
 
 
-        iNode = iNode.previous;
-      }
-    }
 
-    if (asteroids.end!=null) {
-      numAsteroids = asteroids.length();
-      Node<Asteroid> iNode = asteroids.end;
-      for (int i = 0; i < numAsteroids; i ++){
-        Asteroid iAst = iNode.client;
-
-        if ((margin - iAst.position.x >= iAst.radius) ||(iAst.position.x - (width+margin) >= iAst.radius)
-        || (iAst.position.y - (height + margin) >= iAst.radius)){
-
-          removingAst = true;
-          // System.out.println("gonna remove");
-          int index = numAsteroids - 1 -i ;
-          // System.out.println(index + "" + numAsteroids);
-
-          asteroids.remove(index);
-          removingAst = false;
-
-          // iNode = new Asteroid(width, height, margin, diff);
-          // System.out.println("removed one");
-          numAsteroids = asteroids.length();
-
-          // System.out.println(+numAsteroids);
-
-
-        }
-        iNode = iNode.previous;
-
-      }
-    }
 
 
     if (planet != null) {
       planet.update(this,time);
-      if ((margin - planet.position.x >= planet.radius) ||(planet.position.x - (width+margin) >= planet.radius)
-      || (planet.position.y - (height + margin) >= planet.radius)){
+      if (planet.checkDeath()) {
+        // if ((margin - planet.position.x >= planet.radius) ||(planet.position.x - (width+margin) >= planet.radius)
+        // || (planet.position.y - (height + margin) >= planet.radius)){
         planet = null;
 
       }
@@ -460,11 +506,11 @@ class World{
   }
 
   public void renewPlanet(){
-    planet = new Planet(width, height, margin, diff);
+    planet = new Planet();
   }
 
   public void addAsteroid(){
-    Asteroid ast = new Asteroid(width, height, margin, diff);
+    Asteroid ast = new Asteroid();
 
     asteroids.append(ast);
 
@@ -546,12 +592,19 @@ class World{
 
     for (int i =  0; i < gonnaCollide2.length ; i ++ ) {
       int index = gonnaCollide2[gonnaCollide2.length - 1 - i];
+      Asteroid iAsteroid = asteroids.get(index);
+
       asteroids.remove(index);
       // System.out.println(gonnaCollide.toString());
       // System.out.println(gonnaCollide1.toString());
       // System.out.println(Arrays.toString(gonnaCollide2));
       //
       // System.out.println("removed" + index);
+
+      for (int j = 0; j < 5 ;j ++ ) {
+        Debris ijDebris = new Debris(iAsteroid.position.x,iAsteroid.position.y);
+        allDebris.append(ijDebris);
+      }
 
     }
 

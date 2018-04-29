@@ -1,6 +1,6 @@
 
 //import oc.GenericOrderedCollection;
-//import oc.LinkedDS;
+//import oc.CindyDS;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import java.awt.Color;
@@ -60,15 +60,15 @@ public Sphere()
 }
 
 
-public class Tester{
+public class CindyTester{
     public static void main(String args[]){
-        LinkedDS ds = new LinkedDS();
-        // LinkedDS ds = new LinkedDS();
+        CindyDS ds = new CindyDS();
+        // CindyDS ds = new CindyDS();
 
         testDS(ds);
     }
-  public static void testDS(LinkedDS ds){
-    // public static void testDS(LinkedDS ds){
+  public static void testDS(CindyDS ds){
+    // public static void testDS(CindyDS ds){
 
   // System.out.println(ds.end);
   // ds.end.num = 1;
@@ -115,6 +115,9 @@ System.out.println(ds);
         System.out.println(ds.length());
 
         ds.append(8);
+        System.out.println(ds.get(2));
+        System.out.println(ds.get(ds.length()-1));
+
         //ds.append(9);
         ds.append(3);ds.append(1);ds.append(4);ds.append(1);ds.append(5);ds.append(9);
         ds.append(3);ds.pop();ds.pop();
