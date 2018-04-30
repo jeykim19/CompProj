@@ -18,7 +18,7 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.ArrayList;
-class World{
+class World <E> {
   int height;
   int width;
   int margin;
@@ -57,6 +57,7 @@ Pair acceleration;
 	     crushed[i]=new Debris(width, height, margin, diff,asteroids[asteroidnum].position.x,asteroids[asteroidnum].position.y);
     }
     }
+
   public void drawSpheres(Graphics g){
 
     // should paint planet first to set it in the back
@@ -268,6 +269,7 @@ public class Prototype extends JPanel implements KeyListener{
         }
 
 
+
         player = new MyShip(vertices);
 
         player.setCentroid();
@@ -312,7 +314,7 @@ public class Prototype extends JPanel implements KeyListener{
 
 	    	otherShip1 = new OtherShip(vertices1, player);
         otherShip1.addFreeShip(otherShip1);
-        otherShip1.captured();
+        //otherShip1.captured();
         /* otherShip2 = new OtherShip(vertices2, player);
         otherShip3 = new OtherShip(vertices3, player);
         otherShip4 = new OtherShip(vertices4, player);*/
@@ -342,11 +344,60 @@ public class Prototype extends JPanel implements KeyListener{
     public static int counter=0;
     public static boolean check=false;
     public static boolean done=false;
-    //public static int counter1=0;
+
+    public <E extends Spaceship> void DrawShipCollision(E element, Graphics g){
+        int count=world.numAsteroids;
+      	int j=0;
+      	int num=0;
+        Crush crush=new Crush();
+
+      	while (count>0){
+      	    if (crush.CrushAS(world.asteroids[j].position,world.asteroids[j].radius,element.findVertices(element.spaceship))==true){
+      		num=j;
+      		check=true;
+      		break;
+      	}
+      	else{
+      	    check=false;
+
+             	}
+      	count=count-1;
+      	j=j+1;
+      	}
+
+      	if (check==true){
+      	    if (done==false){
+      		world.makeDebris(num);
+      	  world.asteroids[j].position.x=0.0;
+      		world.asteroids[j].position.y=0.0;
+      	       	done=true;
+      		counter=100;
+      	    }
+
+
+      	}
+
+      	else if (check==false){
+      	     done=false;
+      	}
+
+      	//System.out.println(done);
+
+      	if ((counter>0)&&(counter!=1)){
+      	    world.drawDebris(g);
+      	    world.updateDebris(1.0 / (double)FPS);
+      	    counter=counter-1;
+
+      	}
+
+      	if (counter==1){
+      	    counter=0;
+      	    done=false;
+      	}
+    }
 
     public void paintComponent(Graphics gOri) {
 
-    	Crush crush=new Crush();
         Graphics2D g = (Graphics2D) gOri;
 
         super.paintComponent(g);
@@ -362,11 +413,11 @@ public class Prototype extends JPanel implements KeyListener{
       g.fillRect(WIDTH + MARGIN,0,MARGIN,HEIGHT + 2*MARGIN);
       g.fillRect(0,HEIGHT + MARGIN,WIDTH + 2*MARGIN,MARGIN);
         //player.rotate(45, 1/(double)FPS);
-	player.move(1.0/(double)FPS);
-	//otherShip1.rotate(45,1.0/(double)FPS);
-	//otherShip2.rotate(45,1.0/(double)FPS);
-
-	int count=world.numAsteroids;
+	    player.move(1.0/(double)FPS);
+	     //otherShip1.rotate(45,1.0/(double)FPS);
+	     //otherShip2.rotate(45,1.0/(double)FPS);
+      DrawShipCollision(player, g);
+/*	int count=world.numAsteroids;
 	int j=0;
 	int num=0;
 
@@ -413,7 +464,7 @@ public class Prototype extends JPanel implements KeyListener{
 	    counter=0;
 	    done=false;
 	}
-
+*/
 
 	    player.draw(g);
 
