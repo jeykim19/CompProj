@@ -176,56 +176,27 @@ public class Prototype extends JPanel implements KeyListener{
             player.setVelocity(new Pair(0.0, 0.0));
             player.accelerate(1.0);
             player.move(1.0 / (double)FPS);
-            otherShip1.setAcceleration(new Pair(0.0, -200.0));
-            otherShip1.setVelocity(new Pair(0.0, 0.0));
-            otherShip1.accelerate(1.0);
-            otherShip1.move(1.0 / (double)FPS);
-            /* otherShip2.setAcceleration(new Pair(0.0, -200.0));
-            otherShip2.setVelocity(new Pair(0.0, 0.0));
-            otherShip2.accelerate(1.0);
-            otherShip2.move(1.0 / (double)FPS);*/
+
         }
         if(c == 'a'){
             player.setAcceleration(new Pair(-200.0, 0.0));
             player.setVelocity(new Pair(0.0, 0.0));
             player.accelerate(1.0);
             player.move(1.0 / (double)FPS);
-	          otherShip1.setAcceleration(new Pair(-200.0, 0.0));
-            otherShip1.setVelocity(new Pair(0.0, 0.0));
-            otherShip1.accelerate(1.0);
-            otherShip1.move(1.0 / (double)FPS);
-            /* otherShip2.setAcceleration(new Pair(-200.0, 0.0));
-            otherShip2.setVelocity(new Pair(0.0, 0.0));
-            otherShip2.accelerate(1.0);
-            otherShip2.move(1.0 / (double)FPS);*/
+
         }
         if(c == 's'){
             player.setAcceleration(new Pair(0.0, 200.0));
             player.setVelocity(new Pair(0.0, 0.0));
             player.accelerate(1.0);
             player.move(1.0 / (double)FPS);
-            otherShip1.setAcceleration(new Pair(0.0, 200.0));
-            otherShip1.setVelocity(new Pair(0.0, 0.0));
-            otherShip1.accelerate(1.0);
-            otherShip1.move(1.0 / (double)FPS);
-            /*otherShip2.setAcceleration(new Pair(0.0, 200.0));
-            otherShip2.setVelocity(new Pair(0.0, 0.0));
-            otherShip2.accelerate(1.0);
-            otherShip2.move(1.0 / (double)FPS);*/
+
         }
         if(c == 'd'){
             player.setAcceleration(new Pair(200.0, 0.0));
             player.setVelocity(new Pair(0.0, 0.0));
             player.accelerate(1.0);
             player.move(1.0 / (double)FPS);
-            otherShip1.setAcceleration(new Pair(200.0, 0.0));
-            otherShip1.setVelocity(new Pair(0.0, 0.0));
-            otherShip1.accelerate(1.0);
-            otherShip1.move(1.0 / (double)FPS);
-            /*otherShip2.setAcceleration(new Pair(200.0, 0.0));
-            otherShip2.setVelocity(new Pair(0.0, 0.0));
-            otherShip2.accelerate(1.0);
-            otherShip2.move(1.0 / (double)FPS);*/
         }
 
 
@@ -255,56 +226,27 @@ public class Prototype extends JPanel implements KeyListener{
             player.setVelocity(new Pair(0.0, 0.0));
             player.accelerate(1.0);
             player.move(1.0 / (double)FPS);
-	          otherShip1.setAcceleration(new Pair(0.0, -200.0));
-            otherShip1.setVelocity(new Pair(0.0, 0.0));
-            otherShip1.accelerate(1.0);
-            otherShip1.move(1.0 / (double)FPS);
-            /* otherShip2.setAcceleration(new Pair(0.0, -200.0));
-            otherShip2.setVelocity(new Pair(0.0, 0.0));
-            otherShip2.accelerate(1.0);
-            otherShip2.move(1.0 / (double)FPS);*/
+
         }
         if(c == 'a'){
             player.setAcceleration(new Pair(-200.0, 0.0));
             player.setVelocity(new Pair(0.0, 0.0));
             player.accelerate(1.0);
             player.move(1.0 / (double)FPS);
-            otherShip1.setAcceleration(new Pair(-200.0, 0.0));
-            otherShip1.setVelocity(new Pair(0.0, 0.0));
-            otherShip1.accelerate(1.0);
-            otherShip1.move(1.0 / (double)FPS);
-            /* otherShip2.setAcceleration(new Pair(-200.0, 0.0));
-            otherShip2.setVelocity(new Pair(0.0, 0.0));
-            otherShip2.accelerate(1.0);
-            otherShip2.move(1.0 / (double)FPS);*/
         }
         if(c == 's'){
             player.setAcceleration(new Pair(0.0, 200.0));
             player.setVelocity(new Pair(0.0, 0.0));
             player.accelerate(1.0);
             player.move(1.0 / (double)FPS);
-            otherShip1.setAcceleration(new Pair(0.0, 200.0));
-            otherShip1.setVelocity(new Pair(0.0, 0.0));
-            otherShip1.accelerate(1.0);
-            otherShip1.move(1.0 / (double)FPS);
-            /* otherShip2.setAcceleration(new Pair(0.0, 200.0));
-            otherShip2.setVelocity(new Pair(0.0, 0.0));
-            otherShip2.accelerate(1.0);
-            otherShip2.move(1.0 / (double)FPS);*/
+
         }
         if(c == 'd'){
             player.setAcceleration(new Pair(200.0, 0.0));
             player.setVelocity(new Pair(0.0, 0.0));
             player.accelerate(1.0);
             player.move(1.0 / (double)FPS);
-	          otherShip1.setAcceleration(new Pair(200.0, 0.0));
-            otherShip1.setVelocity(new Pair(0.0, 0.0));
-            otherShip1.accelerate(1.0);
-            otherShip1.move(1.0 / (double)FPS);
-            /* otherShip2.setAcceleration(new Pair(200.0, 0.0));
-            otherShip2.setVelocity(new Pair(0.0, 0.0));
-            otherShip2.accelerate(1.0);
-            otherShip2.move(1.0 / (double)FPS);*/
+
         }
 
 
@@ -337,10 +279,10 @@ public class Prototype extends JPanel implements KeyListener{
         System.out.println(player.getCentroid().x + " " + player.getCentroid().y);
         */
 
-	    Pair[] vertices1 = {new Pair(230.0, 300.0), new Pair(200.0, 350.0), new Pair(230.0, 340.0), new Pair(260.0, 350.0)};
-	    Pair[] vertices2 = {new Pair(130.0, 300.0), new Pair(100.0, 350.0), new Pair(130.0, 340.0), new Pair(160.0, 350.0)};
-	    Pair[] vertices3 = {new Pair(330.0, 100.0), new Pair(300.0, 150.0), new Pair(330.0, 140.0), new Pair(360.0, 150.0)}; //new Pair[4];
-	    Pair[] vertices4 = {new Pair(130.0, 100.0), new Pair(100.0, 150.0), new Pair(130.0, 140.0), new Pair(160.0, 150.0)};//new Pair[4];
+	    Pair[] vertices1 = {new Pair(230.0, 300.0), new Pair(200.0, 350.0), new Pair(230.0, 340.0), new Pair(260.0, 350.0)}; //instantiate at center of sphere
+	   // Pair[] vertices2 = {new Pair(130.0, 300.0), new Pair(100.0, 350.0), new Pair(130.0, 340.0), new Pair(160.0, 350.0)};
+	    //Pair[] vertices3 = {new Pair(330.0, 100.0), new Pair(300.0, 150.0), new Pair(330.0, 140.0), new Pair(360.0, 150.0)}; //new Pair[4];
+	    //Pair[] vertices4 = {new Pair(130.0, 100.0), new Pair(100.0, 150.0), new Pair(130.0, 140.0), new Pair(160.0, 150.0)};//new Pair[4];
 
         /*for(int i  = 0; i < 4; i++){
             int shipNumber = i;
@@ -370,6 +312,7 @@ public class Prototype extends JPanel implements KeyListener{
 
 	    	otherShip1 = new OtherShip(vertices1, player);
         otherShip1.addFreeShip(otherShip1);
+        otherShip1.captured();
         /* otherShip2 = new OtherShip(vertices2, player);
         otherShip3 = new OtherShip(vertices3, player);
         otherShip4 = new OtherShip(vertices4, player);*/
@@ -444,7 +387,7 @@ public class Prototype extends JPanel implements KeyListener{
 	if (check==true){
 	    if (done==false){
 		world.makeDebris(num);
-	        world.asteroids[j].position.x=0.0;
+	  world.asteroids[j].position.x=0.0;
 		world.asteroids[j].position.y=0.0;
 	       	done=true;
 		counter=100;

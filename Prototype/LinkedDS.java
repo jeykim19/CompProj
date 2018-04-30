@@ -60,34 +60,42 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
   }
   public void remove1 (E element){
     if (length()==0){
-       System.out.println("This list is empty.");
-     }
+      System.out.println("This list is empty.");
+    }
 
-     int count=0;
-     Node <E> n=end;
-     Node <E> p=end;
-     while (n!=null){
-       count=count+1;
+    int counter=0;
+    int signal=0;
+    Node <E> n=end; //Node<E> n= end;
+    Node <E> p=end; //Node<E> p=end;
+    while ((signal==0)&&(n!=null)){
+	if (n.num == element){  //replace value with element in actual one
+	    if (counter>0){
+		while ((counter-1)>0){
+		  p=p.previous; //replace nextSpace with previous
+		  counter=counter-1;
+	      }
+	      p.previous=p.previous.previous;
+	      length=length-1;
+	      signal=1;
+	  }
+	    else if (counter==0){
+	      end=end.previous;
+	      signal=1;
+	      length=length-1;
+	  }
+	    else if (counter<0){
+	      System.out.println("Error");
+	      signal=1;
+	  }
+      }
+      else if (n.num!= element){
+	  n=n.previous;
+	  counter=counter+1;
+      }
+    }
 
-       if (n.num == element){
- 	  if ((count-1)>0){
- 	      while ((count-1)>0){
- 		       p=p.previous;
- 		        count=count-1;
- 	      }
- 	      p=p.previous.previous;
- 	      length=length-1;
- 	  }
- 	  else if ((count-1)==0){
- 	      end=end.previous;
- 	      length=length-1;
- 	  }
-       }
-       n=n.previous;
-     }
+ }
 
-
-  }
   public void remove(int index){
 
     if ((index<length())&&(index>-1)){
