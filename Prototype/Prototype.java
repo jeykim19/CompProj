@@ -28,7 +28,7 @@ class World <E> {
   Asteroid asteroids[];
   Planet planet;
   Debris crushed[];
-Pair acceleration;
+  Pair acceleration;
 
   public World(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
@@ -63,7 +63,7 @@ Pair acceleration;
     // should paint planet first to set it in the back
 
     if (planet != null) {
-	planet.draw(g);
+	     planet.draw(g);
 
     }
 
@@ -105,7 +105,10 @@ Pair acceleration;
       planet = null;
 
     }
-    }
+  }
+ /*public void givePlanetPos(Pair planetPos, Pair planetVel){
+
+}*/
 
 
   }
@@ -314,7 +317,7 @@ public class Prototype extends JPanel implements KeyListener{
 
 	    	otherShip1 = new OtherShip(vertices1, player);
         otherShip1.addFreeShip(otherShip1);
-        //otherShip1.captured();
+        otherShip1.captured();
         /* otherShip2 = new OtherShip(vertices2, player);
         otherShip3 = new OtherShip(vertices3, player);
         otherShip4 = new OtherShip(vertices4, player);*/
@@ -414,6 +417,8 @@ public class Prototype extends JPanel implements KeyListener{
       g.fillRect(0,HEIGHT + MARGIN,WIDTH + 2*MARGIN,MARGIN);
         //player.rotate(45, 1/(double)FPS);
 	    player.move(1.0/(double)FPS);
+      otherShip1.moveCaptured();
+      otherShip1.rotate(60 ,1.0/(double)FPS);
 	     //otherShip1.rotate(45,1.0/(double)FPS);
 	     //otherShip2.rotate(45,1.0/(double)FPS);
       DrawShipCollision(player, g);

@@ -34,18 +34,24 @@ public class OtherShip extends Spaceship{
         //Pair center = getCentroid();
         fade = new GradientPaint((int)front.x, (int)front.y, new Color(0, 0, 255), (int)center.x, (int)center.y, new Color(0, 0, 50));
     }
-
+    public void moveCaptured(){
+      Pair translation=new Pair(findLeader().getCentroid().x-getFront().x,findLeader().getCentroid().y-getFront().y);
+      AffineTransform transformation=new AffineTransform();
+      transformation.translate(translation.x, translation.y);
+      spaceship.transform(transformation);
+    }
     public void captured(){
         hasBeenCaptured = true;
         //parentShip = captor;
         capturedShips.append(this);
         freeShips.remove1(this);
-        if(capturedShips.length() == 1){
+        /*if(capturedShips.length() == 1){
             attach(motherShip);
         }
         else{
             attach(capturedShips.end.num);
-        }
+        }*/
+        moveCaptured();
     }
 
     public void attach(Spaceship leader){
@@ -54,7 +60,7 @@ public class OtherShip extends Spaceship{
         Pair translation = new Pair(leader.getCentroid().x - leader.getFront().x, leader.getCentroid().y - leader.getFront().y);
 
         for(Pair vertex : vertices){
-            vertex = vertex.add(translation);
+            vertex = vertex.add(translation); //there is an issue here!
         }
         super.createPath(vertices);
     }
@@ -79,27 +85,45 @@ public class OtherShip extends Spaceship{
         //Pair parentAnchor = capturedShips.get(this).parent.getFront();//Whew!
         Pair parentAnchor = findLeader().getFront();
         Pair centroid = getCentroid();
+        AffineTransform transformation = new AffineTransform();
+        theta = theta*Math.PI/180;
+
+        if (parentAnchor.x==anchor.x){
+          if (centroid.x==anchor.x){
+            return;
+          }
+          if (centroid.x>anchor.x){
+              transformation.rotate(-theta*time,anchor.x, anchor.y);
+              System.out.println("1");
+          }
+          else{
+            transformation.rotate(theta*time,anchor.x,anchor.y);
+            System.out.println("2");
+          }
+
+          return;
+        }
         double slope = findSlope(anchor, parentAnchor);
         if(isOnLine(centroid, anchor, slope)){
             return;
         }
 
-        AffineTransform transformation = new AffineTransform();
-        theta = theta*Math.PI/180;
-
         boolean frontLocation = anchor.y < centroid.y;
         boolean isBelow = isBelowLine(centroid, anchor, slope);
 
         //counter-clockwise rotation
-        if(frontLocation == isBelow){
+        if(isBelow){
             transformation.rotate(theta*time, anchor.x, anchor.y);
+            System.out.println("3");
         }
         //This final 'if' statement isn't necessary...can be amended later once we're certain things are working
 
         //clockwise rotation
-        if(frontLocation != isBelow){
+        if(!isBelow){
             transformation.rotate(-theta*time, anchor.x, anchor.y);
+            System.out.println("4");
         }
+        System.out.println("here!");
         spaceship.transform(transformation);
    }
 
@@ -116,7 +140,7 @@ public class OtherShip extends Spaceship{
 
    public boolean isBelowLine(Pair testPoint, Pair linePoint, double slope){
         double lineY = slope * (testPoint.x - linePoint.x) + linePoint.y;
-        if(linePoint.y > testPoint.y){
+        if(lineY > testPoint.y){
             return true;
         }
         return false;

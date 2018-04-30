@@ -68,6 +68,14 @@ public class Spaceship implements Movement{
         g.setPaint(fade);
 
         g.fill(spaceship);
+
+        Pair front = getFront();
+        g.setColor(Color.WHITE);
+        g.fillOval((int)front.x, (int)front.y, 4, 4);
+
+        Pair center = getCentroid();
+        g.setColor(Color.GREEN);
+        g.fillOval((int)center.x, (int)center.y, 4, 4);
     }
 
     public void move(double time){
