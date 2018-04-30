@@ -337,12 +337,12 @@ public class Prototype extends JPanel implements KeyListener{
         System.out.println(player.getCentroid().x + " " + player.getCentroid().y);
         */
 
-	    Pair[] vertices1 = {new Pair(330.0, 300.0), new Pair(300.0, 350.0), new Pair(330.0, 340.0), new Pair(360.0, 350.0)};
+	    Pair[] vertices1 = {new Pair(230.0, 300.0), new Pair(200.0, 350.0), new Pair(230.0, 340.0), new Pair(260.0, 350.0)};
 	    Pair[] vertices2 = {new Pair(130.0, 300.0), new Pair(100.0, 350.0), new Pair(130.0, 340.0), new Pair(160.0, 350.0)};
 	    Pair[] vertices3 = {new Pair(330.0, 100.0), new Pair(300.0, 150.0), new Pair(330.0, 140.0), new Pair(360.0, 150.0)}; //new Pair[4];
 	    Pair[] vertices4 = {new Pair(130.0, 100.0), new Pair(100.0, 150.0), new Pair(130.0, 140.0), new Pair(160.0, 150.0)};//new Pair[4];
 
-        for(int i  = 0; i < 4; i++){
+        /*for(int i  = 0; i < 4; i++){
             int shipNumber = i;
             switch(i+1){
                 case 1: {
@@ -366,9 +366,10 @@ public class Prototype extends JPanel implements KeyListener{
                     }
                 }
             }
-	    }
+	    }*/
 
 	    	otherShip1 = new OtherShip(vertices1, player);
+        otherShip1.addFreeShip(otherShip1);
         /* otherShip2 = new OtherShip(vertices2, player);
         otherShip3 = new OtherShip(vertices3, player);
         otherShip4 = new OtherShip(vertices4, player);*/

@@ -18,10 +18,15 @@ public class OtherShip extends Spaceship{
 
     public OtherShip(Pair[] vertices, MyShip motherShip){
         super(vertices);
-        freeShips.append(this);
+        //freeShips.append(this);
         this.motherShip = motherShip;
+        freeShips=new LinkedDS<OtherShip>();
+        capturedShips=new LinkedDS<OtherShip>();
         //fade = new GradientPaint(0, 0, new Color(0, 0, 255), 0, (int)verticalHeight, new Color(0, 0, 50));
         setGradient();
+    }
+    public void addFreeShip(OtherShip s){
+      freeShips.append(s);
     }
 
     protected void setGradient(){

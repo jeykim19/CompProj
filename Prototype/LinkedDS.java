@@ -9,7 +9,7 @@ public class LinkedDS<E> implements GenericOrderedCollection<E>{
     end = null;
   }
   public void append(E toAppend){
-    Node toAdd = new Node(toAppend);
+    Node<E> toAdd = new Node<E> (toAppend);
     toAdd.previous = end;
     end = toAdd;
     length += 1;
