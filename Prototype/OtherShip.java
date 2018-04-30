@@ -61,7 +61,7 @@ public class OtherShip extends Spaceship{
         if(capturedShips.length() == 1){
             return motherShip;
         }
-        return capturedShips.get(this).previous.num;
+        return (Spaceship) capturedShips.get(this).previous.num;
     }
 
    @Override
