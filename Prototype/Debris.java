@@ -5,7 +5,7 @@ import java.lang.Math.*;
 
 class Debris extends Asteroid{
     public Debris(int initWidth, int initHeight, int initMargin, int initDiff, double x, double y){
-	
+
 	super (initWidth,initHeight,initMargin,initDiff);
 	super.position=new Pair (x,y);
 	Random rand=new Random ();
@@ -24,8 +24,8 @@ class Debris extends Asteroid{
 
   }
     }
-  
-    
+
+
     public void draw(Graphics g){
 
     g.setColor(Color.white);
@@ -38,7 +38,7 @@ class Debris extends Asteroid{
 
 
     g.drawPolygon(xs,ys,NumVertices);
-    
-  
+
+
     }
 }
