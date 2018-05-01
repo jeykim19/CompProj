@@ -73,23 +73,74 @@ class Ship extends Sphere{
 
   public Ship (int initWidth, int initHeight,int initMargin, int initDiff){
     super(initWidth, initHeight, initMargin, initDiff);
-    velocity = new Pair(0.0,0.0);
-
-    diff = initDiff;
-    margin = initMargin;
-    width = initWidth;
-    height = initHeight;
-    Random rand = new Random();
-
-    // the postion of a sphere is its center
-    position = new Pair(0.5*width + margin, height+margin-30.0);
 
 
+
+
+  }
+
+  public Ship(){
+    super();
   }
   public void rotateShape(){
     AffineTransform at = AffineTransform.getRotateInstance(angle,position.x,position.y);
     myShape = at.createTransformedShape (myShape);
   }
+  public void update(World w, double time){
+
+    velocity = velocity.add(acceleration.times(time));
+    position = position.add(velocity.times(time));
+    angle = angle + rotation * time;
+
+
+    updateShape();
+
+    rotateShape();
+
+
+
+  }
+
+
+
+  public void updateShape(){
+    xs = new int[]{(int)position.x,(int)(position.x+radius),(int)(position.x+radius),(int)(position.x-radius),(int)(position.x-radius)};
+
+    ys = new int[]{(int)(position.y-radius),(int)position.y,(int)(position.y+radius),(int)(position.y+radius),(int)position.y};
+
+    Polygon poly = new Polygon(xs,ys,5);
+    AffineTransform at = AffineTransform.getRotateInstance(0,position.x,position.y);
+    myShape = at.createTransformedShape (poly);
+
+  }
+
+
+  public void drawShape(Graphics2D g2D){
+    g2D.setPaint(Color.BLUE);
+    g2D.fill(myShape);
+    // g2D.drawShapePolygon(myShape.xpoints,myShape.ypoints,5);
+
+  }
+
+
+
+}
+
+class MyShip extends Ship{
+  public MyShip (int initWidth, int initHeight,int initMargin, int initDiff){
+    super(initWidth, initHeight, initMargin, initDiff);
+    velocity = new Pair(0.0,0.0);
+
+    // diff = initDiff;
+    // margin = initMargin;
+    // width = initWidth;
+    // height = initHeight;
+    // Random rand = new Random();
+
+    // the postion of a sphere is its center
+    position = new Pair(0.5*width + margin, height+margin-30.0);
+  }
+
   public void update(World w, double time, char charKeyPressed){
     Pair left = new Pair(-500.0, 0.0);
     Pair right = new Pair(500.0, 0.0);
@@ -140,18 +191,6 @@ class Ship extends Sphere{
 
   }
 
-  public void updateShape(){
-    xs = new int[]{(int)position.x,(int)(position.x+radius),(int)(position.x+radius),(int)(position.x-radius),(int)(position.x-radius)};
-
-    ys = new int[]{(int)(position.y-radius),(int)position.y,(int)(position.y+radius),(int)(position.y+radius),(int)position.y};
-
-    roundScreen();
-    Polygon poly = new Polygon(xs,ys,5);
-    AffineTransform at = AffineTransform.getRotateInstance(0,position.x,position.y);
-    myShape = at.createTransformedShape (poly);
-
-  }
-
   public void roundScreen(){
     if ((position.x<= margin)||(position.x>= margin+width)){
 
@@ -167,18 +206,20 @@ class Ship extends Sphere{
 
     }
   }
-  public void drawShape(Graphics2D g2D){
-    g2D.setPaint(Color.BLUE);
-    g2D.fill(myShape);
-    // g2D.drawShapePolygon(myShape.xpoints,myShape.ypoints,5);
+
+  public void updateShape(){
+    xs = new int[]{(int)position.x,(int)(position.x+radius),(int)(position.x+radius),(int)(position.x-radius),(int)(position.x-radius)};
+
+    ys = new int[]{(int)(position.y-radius),(int)position.y,(int)(position.y+radius),(int)(position.y+radius),(int)position.y};
+
+    roundScreen();
+    Polygon poly = new Polygon(xs,ys,5);
+    AffineTransform at = AffineTransform.getRotateInstance(0,position.x,position.y);
+    myShape = at.createTransformedShape (poly);
 
   }
 
-
-
 }
-
-
 class Sphere{
   static int height;
   static int width;
@@ -186,6 +227,7 @@ class Sphere{
   static int diff;
   Pair position;
   Pair velocity;
+  Pair acceleration;
   double radius;
   Shape myShape;
   Random rand = new Random();
@@ -205,6 +247,13 @@ class Sphere{
   }
   public void update(World w, double time){
     position = position.add(velocity.times(time));
+  }
+  public void drawShape(Graphics2D g2D){
+
+  }
+
+  public void updateShape(){
+
   }
 
   public boolean checkDeath(){
@@ -336,34 +385,34 @@ class Debris extends Asteroid{
   }
 }
 
-  class Bullet extends Asteroid{
-    double radius = 5;
-    public Bullet(double x, double y, double a){
+class Bullet extends Asteroid{
+  double radius = 5;
+  public Bullet(double x, double y, double a){
 
-      super();
-      position=new Pair (x,y);
-      angle = a - Math.PI/2;
-      velocity = new Pair(Math.cos(angle)*1000/diff, Math.sin(angle)*1000/diff);
+    super();
+    position=new Pair (x,y);
+    angle = a - Math.PI/2;
+    velocity = new Pair(Math.cos(angle)*1000/diff, Math.sin(angle)*1000/diff);
 
-    }
-    public void drawShape(Graphics2D g2D){
+  }
+  public void drawShape(Graphics2D g2D){
 
-  g2D.setPaint(Color.red);
-  g2D.fill(myShape);
+    g2D.setPaint(Color.red);
+    g2D.fill(myShape);
 
-  // g2D.fillOval((int)(position.x - radius), (int)(position.y - radius), (int)(2*radius), (int)(2*radius));
+    // g2D.fillOval((int)(position.x - radius), (int)(position.y - radius), (int)(2*radius), (int)(2*radius));
 
-}
+  }
 
-public void updateShape(){
-  myShape = new Ellipse2D.Double(position.x-radius, position.y-radius, radius*2, radius*2);
+  public void updateShape(){
+    myShape = new Ellipse2D.Double(position.x-radius, position.y-radius, radius*2, radius*2);
 
-}
+  }
 
-public void update(World w, double time){
-  position = position.add(velocity.times(time));
-  updateShape();
-}
+  public void update(World w, double time){
+    position = position.add(velocity.times(time));
+    updateShape();
+  }
 
 
 
@@ -409,20 +458,26 @@ class World{
 
   int numAsteroids;
   int numBullets;
+  int numSpheres;
   CindyDS<Asteroid> asteroids = new CindyDS<Asteroid>();
   Planet planet;
-  Ship ship;
+  MyShip myShip;
   char charKeyPressed;
   Boolean removingAst = false;
   CindyDS<Debris> allDebris= new CindyDS<Debris>();
   CindyDS<Bullet> bullets = new CindyDS<Bullet>();
+  CindyDS<Sphere> freeShips = new CindyDS<Sphere>();
+  CindyDS<Sphere> capturedShips = new CindyDS<Sphere>();
+
 
   public World(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
     margin = initMargin;
     width = initWidth;
     height = initHeight;
-    ship = new Ship(width, height, margin, diff);
+    myShip = new MyShip(width, height, margin, diff);
+
+    // capturedShips.append(myShip);
 
     Asteroid ast = new Asteroid();
 
@@ -438,31 +493,35 @@ class World{
   public void drawSpheres(Graphics2D g2D){
 
     // should paint planet first to set it in the back
-    drawList(asteroids, g2D);
-    drawList(allDebris, g2D);
-    drawList(bullets, g2D);
-
     if (planet != null) {
       planet.drawShape(g2D);
 
     }
+    // drawList(asteroids, g2D);
+    // drawList(allDebris, g2D);
+    // drawList(bullets, g2D);
+    drawList(freeShips,g2D);
+    drawList(capturedShips,g2D);
 
 
 
-    ship.drawShape(g2D);
+
+
+
+    myShip.drawShape(g2D);
 
 
   }
 
   public void drawList(CindyDS list, Graphics2D g2D){
-    if (list.end!=null) {
-      numAsteroids = list.length();
-      Node<Asteroid> iNode = list.end;
-      for (int i = 0; i < numAsteroids; i ++){
-        Asteroid iClient = iNode.client;
+    numSpheres = list.length();
+    if (numSpheres > 0) {
+      Node<Sphere> iNode = list.end;
+      for (int i = 0; i < numSpheres; i ++){
+        Sphere iClient = iNode.client;
 
-        // System.out.println("gonna draw");
-        // System.out.println(i +""+numAsteroids);
+        System.out.println("gonna draw");
+        // System.out.println(i +""+numSpheres);
         // System.out.println(iAst.position.x);
 
 
@@ -476,13 +535,13 @@ class World{
 
   public void updateList(CindyDS list,double time){
     if (list.end!=null) {
-      numAsteroids = list.length();
-      Node<Asteroid> iNode = list.end;
-      for (int i = 0; i < numAsteroids; i ++){
-        Asteroid iClient = iNode.client;
+      numSpheres = list.length();
+      Node<Sphere> iNode = list.end;
+      for (int i = 0; i < numSpheres; i ++){
+        Sphere iClient = iNode.client;
 
-        // System.out.println("gonna draw");
-        // System.out.println(i +""+numAsteroids);
+        // System.out.println("gonna update");
+        // System.out.println(i +""+numSpheres);
         // System.out.println(iAst.position.x);
 
 
@@ -490,7 +549,7 @@ class World{
         // iNode.client.updateShape();
 
         if (iClient.checkDeath()) {
-          int index = numAsteroids - 1 -i ;
+          int index = numSpheres - 1 -i ;
           removingAst = true;
           list.remove(index);
           removingAst = false;
@@ -503,11 +562,48 @@ class World{
     }
   }
 
+  public void updateCapturedShips(double time){
+    numSpheres = capturedShips.length();
+    if (numSpheres > 0) {
+      // Node<Sphere> iNodePre = capturedShips.end.previous;
+      Node<Sphere> iNode = capturedShips.end;
+
+      for (int i = 0; i < numSpheres; i ++){
+        // Sphere iClinetPre = iNodePre.client;
+        Sphere iClient = iNode.client;
+
+        System.out.println("captured");
+        System.out.println(i +""+numSpheres);
+        // System.out.println(iAst.position.x);
+        iClient.position = myShip.position.add(new Pair(myShip.radius*(i+1)*6,0.0));
+        System.out.println(iClient.position.x + " " + iClient.position.y);
+        System.out.println(myShip.position.x + " " + myShip.position.y);
+
+        // iClient.velocity = iClinetPre.velocity;
+        // iClient.acceleration = iClinetPre.acceleration;
+
+        // iClient.update(this,time);
+        iClient.updateShape();
+
+
+
+
+
+
+        iNode = iNode.previous;
+      }
+    }
+
+  }
+
+
   public void updateSpheres(double time){
 
     updateList(asteroids,time);
     updateList(allDebris,time);
-updateList(bullets,time);
+    updateList(bullets,time);
+    updateList(freeShips,time);
+    updateCapturedShips(time);
 
     if (planet != null) {
       planet.update(this,time);
@@ -519,7 +615,8 @@ updateList(bullets,time);
       }
     }
 
-    ship.update(this,time,charKeyPressed);
+    myShip.update(this,time,charKeyPressed);
+    System.out.println("updateSpheres" + myShip.position.x + " " + myShip.position.y);
 
 
     // for (int i = 0; i < numAsteroids; i ++){
@@ -544,6 +641,11 @@ updateList(bullets,time);
 
   public void renewPlanet(){
     planet = new Planet();
+    Ship freeShip = new Ship();
+    freeShip.position = planet.position;
+    freeShip.velocity = planet.velocity;
+    freeShips.append(freeShip);
+
   }
 
   public void addAsteroid(){
@@ -557,11 +659,40 @@ updateList(bullets,time);
 
   public void shoot(){
     if (charKeyPressed == 'j'){
-    Bullet newBullet = new Bullet(ship.position.x, ship.position.y, ship.angle);
+      Bullet newBullet = new Bullet(myShip.position.x, myShip.position.y, myShip.angle);
       bullets.append(newBullet);
 
 
     }
+
+  }
+
+  public void capture(){
+    numSpheres = freeShips.length();
+if (numSpheres > 0) {
+  Node<Sphere> iNode = freeShips.end;
+
+  for (int i = 0; i < numSpheres; i ++ ) {
+    int iIndex = numSpheres- 1 -i ;
+    System.out.println(iIndex + " " + numSpheres);
+
+
+    Sphere iClient = iNode.client;
+    // System.out.println(iClient.position.x + " " + iClient.position.y);
+
+    Area myArea = new Area(myShip.myShape);
+
+    Area iArea = new Area(iClient.myShape);
+    myArea.intersect(iArea);
+    if (!myArea.isEmpty()) {
+      capturedShips.append(iNode.client);
+      freeShips.remove(iIndex);
+      System.out.println("catch");
+
+    }
+    iNode = iNode.previous;
+  }
+}
 
   }
 
@@ -610,34 +741,36 @@ updateList(bullets,time);
 
         }
 
-numBullets = bullets.length();
-Node<Bullet> kNode = bullets.end;
+        numBullets = bullets.length();
+        Node<Bullet> kNode = bullets.end;
 
-if ((numBullets > 1)&&(bullets.end!=null)) {
+        if ((numBullets > 1)&&(bullets.end!=null)) {
 
-for (int k = 1; k < numBullets; k ++){
-          int kIndex = numBullets - 1 -k ;
+          for (int k = 1; k < numBullets; k ++){
+            int kIndex = numBullets - 1 -k ;
 
-          Asteroid kAst = kNode.client;
+            Asteroid kAst = kNode.client;
 
-          // keep iArea inside the inner loop so it's updated as the inner loop run
-          Area iArea = new Area(iAst.myShape);
+            // keep iArea inside the inner loop so it's updated as the inner loop run
+            Area iArea = new Area(iAst.myShape);
 
-          Area kArea = new Area(kAst.myShape);
-          iArea.intersect(kArea);
-          // System.out.println(iArea.isEmpty() + " "+ (iArea.equals(kArea)) );
-          // System.out.println(numAsteroids + " " + iIndex + " " + kIndex);
-          // we want A is false and B is false, which is equivalent to A or B is not true
-          if (!((iArea.equals(kArea))|| (iArea.isEmpty()) )) {
-            // System.out.println("gonna collide");
+            Area kArea = new Area(kAst.myShape);
+            iArea.intersect(kArea);
+            // System.out.println(iArea.isEmpty() + " "+ (iArea.equals(kArea)) );
+            // System.out.println(numAsteroids + " " + iIndex + " " + kIndex);
+            // we want A is false and B is false, which is equivalent to A or B is not true
+            if (!((iArea.equals(kArea))|| (iArea.isEmpty()) )) {
+              // System.out.println("gonna collide");
 
-            gonnaCollide.add(iIndex);
+              gonnaCollide.add(iIndex);
+            }
+            kNode = kNode.previous;
+
           }
-          kNode = kNode.previous;
 
         }
 
-}
+
 
 
         iNode = iNode.previous;
@@ -704,6 +837,8 @@ public class CindySpace extends JPanel implements KeyListener{
         world.updateKey(charKeyPressed);
         world.shoot();
         world.updateSpheres(1.0 / (double)FPS);
+        world.capture();
+
         // System.out.println(world.removingAst);
         world.checkCollision();
 
@@ -761,18 +896,18 @@ public class CindySpace extends JPanel implements KeyListener{
 
     public void keyPressed(KeyEvent e) {
       char c=e.getKeyChar();
-      System.out.println("You pressed down: " + c);
+      // System.out.println("You pressed down: " + c);
       charKeyPressed = c;
     }
     public void keyReleased(KeyEvent e) {
       char c=e.getKeyChar();
-      System.out.println("\tYou let go of: " + c);
+      // System.out.println("You let go of: " + c);
     }
 
 
     public void keyTyped(KeyEvent e) {
       char c = e.getKeyChar();
-      System.out.println("You typed: " + c);
+      // System.out.println("You typed: " + c);
     }
     public void addNotify() {
       super.addNotify();
