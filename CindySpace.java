@@ -153,10 +153,17 @@ class Ship extends Sphere{
   }
 
   public void roundScreen(){
-    if ((position.x<= margin)||(position.x>= margin+width)||
-    (position.y <=margin)||(position.y >= margin + height)) {
-      Pair screenCenter = new Pair(margin + width/2, margin + height/2);
-      position = position.reflect(screenCenter);
+    if ((position.x<= margin)||(position.x>= margin+width)){
+
+      position.x = 2*(margin + width/2) - position.x;
+    }
+
+    if((position.y <=margin)||(position.y >= margin + height)) {
+      position.y = 2*(margin + height/2) - position.y;
+
+
+      // Pair screenCenter = new Pair(margin + width/2, margin + height/2);
+      // position = position.reflect(screenCenter);
 
     }
   }
@@ -327,17 +334,36 @@ class Debris extends Asteroid{
 
     }
   }
+}
 
-  class Bullet extends Planet{
+  class Bullet extends Asteroid{
     double radius = 5;
-    public Debris(double x, double y, angle a){
+    public Bullet(double x, double y, double a){
 
       super();
       position=new Pair (x,y);
-      angle = a;
-      velocity = new Pair(Math.cos(angle)*speed*4, Math.sin(angle)*speed*4);
+      angle = a - Math.PI/2;
+      velocity = new Pair(Math.cos(angle)*1000/diff, Math.sin(angle)*1000/diff);
 
     }
+    public void drawShape(Graphics2D g2D){
+
+  g2D.setPaint(Color.red);
+  g2D.fill(myShape);
+
+  // g2D.fillOval((int)(position.x - radius), (int)(position.y - radius), (int)(2*radius), (int)(2*radius));
+
+}
+
+public void updateShape(){
+  myShape = new Ellipse2D.Double(position.x-radius, position.y-radius, radius*2, radius*2);
+
+}
+
+public void update(World w, double time){
+  position = position.add(velocity.times(time));
+  updateShape();
+}
 
 
 
@@ -382,6 +408,7 @@ class World{
   int diff;
 
   int numAsteroids;
+  int numBullets;
   CindyDS<Asteroid> asteroids = new CindyDS<Asteroid>();
   Planet planet;
   Ship ship;
@@ -413,6 +440,7 @@ class World{
     // should paint planet first to set it in the back
     drawList(asteroids, g2D);
     drawList(allDebris, g2D);
+    drawList(bullets, g2D);
 
     if (planet != null) {
       planet.drawShape(g2D);
@@ -479,10 +507,7 @@ class World{
 
     updateList(asteroids,time);
     updateList(allDebris,time);
-
-
-
-
+updateList(bullets,time);
 
     if (planet != null) {
       planet.update(this,time);
@@ -530,9 +555,11 @@ class World{
     // System.out.println("add");
   }
 
-  public void shoot(charKeyPressed){
-    if (charKeyPressed == "j") {
-      
+  public void shoot(){
+    if (charKeyPressed == 'j'){
+    Bullet newBullet = new Bullet(ship.position.x, ship.position.y, ship.angle);
+      bullets.append(newBullet);
+
 
     }
 
@@ -583,8 +610,34 @@ class World{
 
         }
 
+numBullets = bullets.length();
+Node<Bullet> kNode = bullets.end;
 
+if ((numBullets > 1)&&(bullets.end!=null)) {
 
+for (int k = 1; k < numBullets; k ++){
+          int kIndex = numBullets - 1 -k ;
+
+          Asteroid kAst = kNode.client;
+
+          // keep iArea inside the inner loop so it's updated as the inner loop run
+          Area iArea = new Area(iAst.myShape);
+
+          Area kArea = new Area(kAst.myShape);
+          iArea.intersect(kArea);
+          // System.out.println(iArea.isEmpty() + " "+ (iArea.equals(kArea)) );
+          // System.out.println(numAsteroids + " " + iIndex + " " + kIndex);
+          // we want A is false and B is false, which is equivalent to A or B is not true
+          if (!((iArea.equals(kArea))|| (iArea.isEmpty()) )) {
+            // System.out.println("gonna collide");
+
+            gonnaCollide.add(iIndex);
+          }
+          kNode = kNode.previous;
+
+        }
+
+}
 
 
         iNode = iNode.previous;
@@ -649,6 +702,7 @@ public class CindySpace extends JPanel implements KeyListener{
       while(true){
         // world.updateGravity(charKeyPressed);
         world.updateKey(charKeyPressed);
+        world.shoot();
         world.updateSpheres(1.0 / (double)FPS);
         // System.out.println(world.removingAst);
         world.checkCollision();
