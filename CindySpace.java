@@ -328,6 +328,17 @@ class Debris extends Asteroid{
     }
   }
 
+  class Bullet extends Planet{
+    double radius = 5;
+    public Debris(double x, double y, angle a){
+
+      super();
+      position=new Pair (x,y);
+      angle = a;
+      velocity = new Pair(Math.cos(angle)*speed*4, Math.sin(angle)*speed*4);
+
+    }
+
 
 
 }
@@ -377,6 +388,7 @@ class World{
   char charKeyPressed;
   Boolean removingAst = false;
   CindyDS<Debris> allDebris= new CindyDS<Debris>();
+  CindyDS<Bullet> bullets = new CindyDS<Bullet>();
 
   public World(int initWidth, int initHeight,int initMargin, int initDiff){
     diff = initDiff;
@@ -516,6 +528,14 @@ class World{
 
 
     // System.out.println("add");
+  }
+
+  public void shoot(charKeyPressed){
+    if (charKeyPressed == "j") {
+      
+
+    }
+
   }
 
   public void checkCollision(){
