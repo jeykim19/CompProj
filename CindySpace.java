@@ -707,7 +707,7 @@ if (numSpheres > 0) {
     numAsteroids = asteroids.length();
     ArrayList<Integer> gonnaCollide = new ArrayList<Integer>();
 
-    if ((numAsteroids > 1)&&(asteroids.end!=null)) {
+    if (numAsteroids > 2) {
 
       // Don't start with the end because the end might have been just added withouut its shpaed being updated
       Node<Asteroid> iNode = asteroids.end.previous;
