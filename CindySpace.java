@@ -497,9 +497,9 @@ class World{
       planet.drawShape(g2D);
 
     }
-    // drawList(asteroids, g2D);
-    // drawList(allDebris, g2D);
-    // drawList(bullets, g2D);
+    drawList(asteroids, g2D);
+    drawList(allDebris, g2D);
+    drawList(bullets, g2D);
     drawList(freeShips,g2D);
     drawList(capturedShips,g2D);
 
