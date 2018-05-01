@@ -24,6 +24,7 @@ public class OtherShip extends Spaceship{
         capturedShips=new LinkedDS<OtherShip>();
         //fade = new GradientPaint(0, 0, new Color(0, 0, 255), 0, (int)verticalHeight, new Color(0, 0, 50));
         setGradient();
+      
     }
     public void addFreeShip(OtherShip s){
       freeShips.append(s);
@@ -94,11 +95,11 @@ public class OtherShip extends Spaceship{
           }
           if (centroid.x>anchor.x){
               transformation.rotate(-theta*time,anchor.x, anchor.y);
-              System.out.println("1");
+              //System.out.println("1");
           }
           else{
             transformation.rotate(theta*time,anchor.x,anchor.y);
-            System.out.println("2");
+            //System.out.println("2");
           }
 
           return;
@@ -114,16 +115,16 @@ public class OtherShip extends Spaceship{
         //counter-clockwise rotation
         if(isBelow){
             transformation.rotate(theta*time, anchor.x, anchor.y);
-            System.out.println("3");
+            //System.out.println("3");
         }
         //This final 'if' statement isn't necessary...can be amended later once we're certain things are working
 
         //clockwise rotation
         if(!isBelow){
             transformation.rotate(-theta*time, anchor.x, anchor.y);
-            System.out.println("4");
+            //System.out.println("4");
         }
-        System.out.println("here!");
+        //System.out.println("here!");
         spaceship.transform(transformation);
    }
 
@@ -145,4 +146,5 @@ public class OtherShip extends Spaceship{
         }
         return false;
    }
+
 }

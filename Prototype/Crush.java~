@@ -1,0 +1,228 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class Pair{
+    public double x;
+    public double y;
+    
+    public Pair(double initX, double initY){
+	x = initX;
+	y = initY;
+    }
+
+    public Pair add(Pair toAdd){
+	return new Pair(x + toAdd.x, y + toAdd.y);
+    }
+
+    public Pair divide(double denom){
+	return new Pair(x / denom, y / denom);
+    }
+
+    public Pair times(double val){
+	return new Pair(x * val, y * val);
+    }
+
+    public void flipX(){
+	x = -x;
+    }
+    
+    public void flipY(){
+	y = -y;
+    }
+}
+class Crush{
+
+public double midpoint (double x1, double x2){
+    return (x1+x2)/2;
+}
+
+public double distance (double x1,double x2, double y1, double y2){
+    double inside= Math.pow(x2-x1,2)+ Math.pow(y2-y1,2);
+    double distance=Math.pow (inside,0.5);
+    return distance;
+	}
+
+    public boolean CrushAS (Pair asteroidPos, double radius, List<Pair> vertices){
+	Pair shipPos1=vertices.get(0);
+	Pair shipPos2=vertices.get(1);
+	Pair shipPos3=vertices.get(3);
+	
+    double mid12x=midpoint(shipPos2.x, shipPos1.x);
+    double mid13x=midpoint(shipPos3.x, shipPos1.x);
+    double mid23x=midpoint(shipPos2.x, shipPos3.x);
+    double mid12y=midpoint(shipPos2.y, shipPos1.y);
+    double mid13y=midpoint(shipPos3.y, shipPos1.y);
+    double mid23y=midpoint(shipPos2.y, shipPos3.y);
+
+    double distance12=distance(mid12x,asteroidPos.x, mid12y, asteroidPos.y);
+    double distance13=distance(mid13x,asteroidPos.x, mid13y, asteroidPos.y);
+    double distance23=distance(mid23x,asteroidPos.x, mid23y, asteroidPos.y);
+
+    double y=0.0;
+    double x=0.0;
+    double y1=0.0;
+    double x1=0.0;
+    double slope=0.0;
+    
+	 if ((distance12<distance13)&&(distance12<distance23)){
+	        slope=(shipPos1.y-shipPos2.y)/(shipPos1.x-shipPos2.x);
+		y=shipPos2.y;
+		x=shipPos2.x;
+		y1=shipPos1.y;
+		x1=shipPos1.x;
+	 }
+	    else if ((distance13<distance12)&&(distance13<distance23)){
+		slope=(shipPos3.y-shipPos1.y)/(shipPos3.x-shipPos1.x);
+		y=shipPos1.y;
+	        x=shipPos1.x;
+	        y1=shipPos3.y;
+	        x1=shipPos3.x;
+	    }
+	    else if ((distance23<distance13)&&(distance23<distance12)){
+		slope=(shipPos3.y-shipPos2.y)/(shipPos3.x-shipPos2.x);
+	        y=shipPos2.y;
+	        x=shipPos2.x;
+	        y1=shipPos3.y;
+	        x1=shipPos3.x;
+       	     }
+	 if (Double.isInfinite(slope)==false){
+	     if (x>=x1){
+		 while ((x>=x1)){
+		     if ( (double)Math.round(distance(x, asteroidPos.x, y, asteroidPos.y)*10d)/10d==radius){
+			 return true;
+		     }
+         	else {
+		    if (slope!=0.0){
+			x=x-0.01;
+			y=slope*(x-x1)+y1 ;
+		    }
+		    else if (slope==0.0){
+			x=x-0.01;
+		    }
+		}
+		 }
+	     }
+	     else if (x<x1){
+	 while ((x<=x1)){
+	     if ( (double)Math.round(distance(x, asteroidPos.x, y, asteroidPos.y)*10d)/10d==radius){
+		    return true;
+		}
+		else {
+		    if (slope!=0.0){
+			x=x+0.01;
+			y=slope*(x-x1)+y1 ;
+		    }
+		    else if (slope==0.0){
+			x=x+0.01;
+		    }
+		}
+	 }
+	     }
+	 }
+	 else if (Double.isInfinite(slope)==true){
+	     if (y>=y1){
+		 while ((y>=y1)){
+		     if ((double)Math.round(distance(x, asteroidPos.x, y, asteroidPos.y)*100d)/100d==radius){
+			 return true;
+		     }
+		     else{
+			y=y-0.1; //should stop only when its reached y1
+		     }
+		 }
+	     }
+	     else if (y<y1){
+		  while ((y<=y1)){
+		     if ((double)Math.round(distance(x, asteroidPos.x, y, asteroidPos.y)*10d)/10d==radius){
+			 return true;
+		     }
+		     else{
+			y=y+0.1; //should stop only when its reached y1
+		     }
+		  }
+	     }
+	 }
+    return false;
+}
+
+public boolean CrushAB (Pair asteroidPos, double radius, Pair bulletPos, double bradius){
+    double x=0.0;
+    double y=0.0;
+    double x1=0.0;
+    int check=10000;
+    
+    double mx1=midpoint(bulletPos.x, bulletPos.x+bradius);
+    double my1=midpoint(bulletPos.y-bradius, bulletPos.y);
+    double mx2=midpoint(bulletPos.x-bradius, bulletPos.x);
+    double my2=midpoint(bulletPos.y+bradius, bulletPos.y);
+    
+    //split into four hemispheres and determine which side its closer to then check that one side only
+    double d1=distance(asteroidPos.x, mx1, asteroidPos.y, my1);
+    double d2=distance(asteroidPos.x, mx1, asteroidPos.y, my2);
+    double d3=distance(asteroidPos.x, mx2, asteroidPos.y, my2);
+    double d4=distance(asteroidPos.x, mx2,asteroidPos.y, my1);
+
+    if ((d1<d2)&&(d1<d3)&&(d1<d4)){
+	x=bulletPos.x;
+	y=bulletPos.y-bradius;
+	x1=bulletPos.x+bradius;
+	check=0;
+    }
+    else if ((d2<d1)&&(d2<d3)&&(d2<d4)){
+	x=bulletPos.x;
+	y=bulletPos.y+bradius;
+	x1=bulletPos.x+bradius;
+	check=1;
+    }
+    else if ((d3<d1)&&(d3<d2)&&(d3<d4)){
+	x=bulletPos.x-bradius;
+	y=bulletPos.y;
+	x1=bulletPos.x;
+	check=1;
+    }
+    else if ((d4<d1)&&(d4<d3)&&(d4<d2)){
+	x=bulletPos.x-bradius;
+	y=bulletPos.y;
+	x1=bulletPos.x;
+	check=0;
+    }
+
+    if (check==0){
+       while (x<=x1){
+                if ((double)Math.round(distance(x, asteroidPos.x, y, asteroidPos.y)*10d)/10d==radius){
+		    return true;
+		}
+		else {
+		    x=x+0.01;
+		    y=Math.pow(Math.pow(bradius,2)-Math.pow(x-bulletPos.x,2),0.5)+bulletPos.y;
+		 
+		}
+       }
+    }
+    else if (check==1){
+       while (x<=x1){
+	   if ((double)Math.round(distance(x, asteroidPos.x, y, asteroidPos.y)*10d)/10d==radius){
+		    return true;
+		}
+		else {
+		    x=x+0.01;
+		    y=-Math.pow(Math.pow(bradius,2)-Math.pow(x-bulletPos.x,2),0.5)+bulletPos.y;
+		}
+       }
+	}
+        
+    return false;
+ }
+
+     public static void main(String[] args){
+	 Pair asteroid=new Pair (4,4);
+	 Pair ship1=new Pair (3,2);
+	 Pair ship2=new Pair (6,5);
+	 Pair ship3=new Pair (7,5);
+	 Pair bullet=new Pair (3,3);
+	 Crush c=new Crush();
+	 //System.out.println(c.CrushAS(asteroid,1,ship1, ship2, ship3));
+	 //System.out.println(c.CrushAB(asteroid,1,bullet, 1)); //should give back true because touching
+	 
+	 
+     }
+}

@@ -1,6 +1,3 @@
-import java.awt.Color;
-import java.awt.Graphics;
-
 class Planet extends Sphere{
   double radius = 170;
   public Planet(int initWidth, int initHeight,int initMargin, int initDiff){
@@ -9,8 +6,8 @@ class Planet extends Sphere{
   }
   public void draw(Graphics g){
 
-    g.setColor(Color.WHITE);
+    g.setColor(Color.red);
     g.fillOval((int)(position.x - radius), (int)(position.y - radius), (int)(2*radius), (int)(2*radius));
 
   }
-}
+

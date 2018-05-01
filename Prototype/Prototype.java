@@ -58,7 +58,7 @@ class World <E> {
     }
     }
 
-  public void drawSpheres(Graphics g){
+  public void drawPlanet(Graphics g){
 
     // should paint planet first to set it in the back
 
@@ -68,14 +68,14 @@ class World <E> {
     }
 
     //if (count>=0){//alter here
+    }
+
+    public void drawAsteroids(Graphics g){
     for (int i = 0; i < numAsteroids; i++){
       asteroids[i].draw(g);
-    }
-    //for (int i=0; i<5; i++){
-    //	crushed[i].draw(g);
-    // }
-
+      }
   }
+
 
     public void drawDebris(Graphics g){
     	  for (int i=0; i<5; i++){
@@ -106,12 +106,14 @@ class World <E> {
 
     }
   }
- /*public void givePlanetPos(Pair planetPos, Pair planetVel){
+}
 
-}*/
-
-
-  }
+ public Pair getPlanetPos(){
+   return planet.position;
+ }
+ public double getPlanetRad(){
+   return planet.radius;
+ }
 
   public void renewPlanet(){
     planet = new Planet(width, height, margin, diff);
@@ -132,15 +134,20 @@ public class Prototype extends JPanel implements KeyListener{
     // OtherShip otherShip2;
     // OtherShip otherShip3;
     // OtherShip otherShip4;
-
+    public void MakeOtherShip(){
+      double sphereX=world.getPlanetPos().x;
+      double sphereY=world.getPlanetPos().y;
+    //Pair[] vertices1={new Pair(230.0,300.0),new Pair (200.0,350.0),new Pair (230.0,340.0), new Pair (260.0,350.0)};
+      Pair[] vertices1 = {new Pair(sphereX, sphereY-20.0), new Pair(sphereX-30.0, sphereY+30.0), new Pair(sphereX, sphereY+20.0), new Pair(sphereX+30.0, sphereY+30.0)}; //instantiate at center of sphere
+      otherShip1 = new OtherShip(vertices1, player);
+      otherShip1.addFreeShip(otherShip1);
+  }
     class Runner implements Runnable{
         public void run()
         {
             while(true){
-		world.updateSpheres(1.0/(double)FPS);
-		//if (done==true){
-		//	world.updateDebris(1.0 / (double)FPS);
-		//	}
+		            world.updateSpheres(1.0/(double)FPS);
+
                 repaint();
                 try{
                     Thread.sleep(1000/FPS);
@@ -204,6 +211,7 @@ public class Prototype extends JPanel implements KeyListener{
         }
 
 
+
     }
     public void keyReleased(KeyEvent e) {
         char c=e.getKeyChar();
@@ -254,6 +262,8 @@ public class Prototype extends JPanel implements KeyListener{
         }
 
 
+
+
     }
 
     public void addNotify() {
@@ -284,8 +294,9 @@ public class Prototype extends JPanel implements KeyListener{
         System.out.println(player.getCentroid().x + " " + player.getCentroid().y);
         */
 
-	    Pair[] vertices1 = {new Pair(230.0, 300.0), new Pair(200.0, 350.0), new Pair(230.0, 340.0), new Pair(260.0, 350.0)}; //instantiate at center of sphere
-	   // Pair[] vertices2 = {new Pair(130.0, 300.0), new Pair(100.0, 350.0), new Pair(130.0, 340.0), new Pair(160.0, 350.0)};
+        //Pair[] vertices1={new Pair(230.0,300.0),new Pair (200.0,350.0),new Pair (230.0,340.0), new Pair (260.0,350.0)};
+	     // Pair[] vertices1 = {new Pair(sphereX, sphereY-20.0), new Pair(sphereX-30.0, sphereY+30.0), new Pair(sphereX, sphereY+20.0), new Pair(sphereX+30.0, sphereY+30.0)}; //instantiate at center of sphere
+     // Pair[] vertices2 = {new Pair(130.0, 300.0), new Pair(100.0, 350.0), new Pair(130.0, 340.0), new Pair(160.0, 350.0)};
 	    //Pair[] vertices3 = {new Pair(330.0, 100.0), new Pair(300.0, 150.0), new Pair(330.0, 140.0), new Pair(360.0, 150.0)}; //new Pair[4];
 	    //Pair[] vertices4 = {new Pair(130.0, 100.0), new Pair(100.0, 150.0), new Pair(130.0, 140.0), new Pair(160.0, 150.0)};//new Pair[4];
 
@@ -315,9 +326,9 @@ public class Prototype extends JPanel implements KeyListener{
             }
 	    }*/
 
-	    	otherShip1 = new OtherShip(vertices1, player);
-        otherShip1.addFreeShip(otherShip1);
-        otherShip1.captured();
+	    //	otherShip1 = new OtherShip(vertices1, player);
+        //otherShip1.addFreeShip(otherShip1);
+        //otherShip1.captured();
         /* otherShip2 = new OtherShip(vertices2, player);
         otherShip3 = new OtherShip(vertices3, player);
         otherShip4 = new OtherShip(vertices4, player);*/
@@ -408,7 +419,11 @@ public class Prototype extends JPanel implements KeyListener{
 
         g.setPaint(Color.BLACK);
         g.fillRect(0, 0, WIDTH+2*MARGIN, HEIGHT+2*MARGIN);
-	      world.drawSpheres(g);
+        world.drawAsteroids(g);
+
+       world.drawPlanet(g);
+
+
 
       g.setColor(Color.blue);
       g.fillRect(0,0,WIDTH + 2*MARGIN,MARGIN);
@@ -417,59 +432,15 @@ public class Prototype extends JPanel implements KeyListener{
       g.fillRect(0,HEIGHT + MARGIN,WIDTH + 2*MARGIN,MARGIN);
         //player.rotate(45, 1/(double)FPS);
 	    player.move(1.0/(double)FPS);
-      otherShip1.moveCaptured();
+      //otherShip1.moveCaptured();
+      MakeOtherShip();
+      //if ship hovers over othership, then: otherShip1.captured(); othership1.moveCaptured();
       otherShip1.rotate(60 ,1.0/(double)FPS);
+
+
 	     //otherShip1.rotate(45,1.0/(double)FPS);
 	     //otherShip2.rotate(45,1.0/(double)FPS);
       DrawShipCollision(player, g);
-/*	int count=world.numAsteroids;
-	int j=0;
-	int num=0;
-
-	while (count>0){
-	    if (crush.CrushAS(world.asteroids[j].position,world.asteroids[j].radius,player.findVertices(player.spaceship))==true){
-		num=j;
-		check=true;
-		break;
-	}
-	else{
-	    check=false;
-
-       	}
-	count=count-1;
-	j=j+1;
-	}
-
-	if (check==true){
-	    if (done==false){
-		world.makeDebris(num);
-	  world.asteroids[j].position.x=0.0;
-		world.asteroids[j].position.y=0.0;
-	       	done=true;
-		counter=100;
-	    }
-
-
-	}
-
-	else if (check==false){
-	     done=false;
-	}
-
-	//System.out.println(done);
-
-	if ((counter>0)&&(counter!=1)){
-	    world.drawDebris(g);
-	    world.updateDebris(1.0 / (double)FPS);
-	    counter=counter-1;
-
-	}
-
-	if (counter==1){
-	    counter=0;
-	    done=false;
-	}
-*/
 
 	    player.draw(g);
 
