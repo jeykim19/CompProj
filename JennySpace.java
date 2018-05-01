@@ -130,6 +130,7 @@ public class JennySpace extends JPanel implements KeyListener{
             while(true){
                 world.updateSpheres(1.0/(double)FPS);
                 world.updateDebris(1.0 / (double)FPS);
+		diff=diff+1;
                 repaint();
                 try{
                     Thread.sleep(1000/FPS);
