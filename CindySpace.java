@@ -328,6 +328,8 @@ class Asteroid extends Sphere {
       dists[iVertex] = rand.nextDouble()*radius/4 + radius;
 
     }
+    updateShape();
+
   }
 
   public void updateShape(){
@@ -382,7 +384,10 @@ class Debris extends Asteroid{
       dists[iVertex] = (rand.nextDouble()*radius/4+rand.nextDouble()*radius)/2 ;
 
     }
+    updateShape();
+
   }
+
 }
 
 class Bullet extends Asteroid{
@@ -393,6 +398,8 @@ class Bullet extends Asteroid{
     position=new Pair (x,y);
     angle = a - Math.PI/2;
     velocity = new Pair(Math.cos(angle)*1000/diff, Math.sin(angle)*1000/diff);
+
+    updateShape();
 
   }
   public void drawShape(Graphics2D g2D){
@@ -771,8 +778,6 @@ if (numSpheres > 0) {
         }
 
 
-
-
         iNode = iNode.previous;
       }
     }
@@ -834,9 +839,9 @@ public class CindySpace extends JPanel implements KeyListener{
     {
       while(true){
         // world.updateGravity(charKeyPressed);
+        world.updateSpheres(1.0 / (double)FPS);
         world.updateKey(charKeyPressed);
         world.shoot();
-        world.updateSpheres(1.0 / (double)FPS);
         world.capture();
 
         // System.out.println(world.removingAst);
