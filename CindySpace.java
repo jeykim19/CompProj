@@ -78,9 +78,6 @@ class Ship extends Sphere{
   public Ship (int initWidth, int initHeight,int initMargin, int initDiff){
     super(initWidth, initHeight, initMargin, initDiff);
 
-
-
-
   }
 
   public Ship(Pair planetPosition){
@@ -466,7 +463,7 @@ class World{
 
 
   }
-
+//draw myShape for all entities
   public void drawSpheres(Graphics2D g2D){
 
     // should paint planet first to set it in the back
@@ -489,7 +486,7 @@ class World{
 
 
   }
-
+// helper method for drawSpheres(), draw entities stored in linked list
   public void drawList(CindyDS list, Graphics2D g2D){
     numSpheres = list.length();
     if (numSpheres > 0) {
@@ -507,6 +504,7 @@ class World{
     }
   }
 
+// helper method for updateSphere(), update entities stored in linked list
   public void updateList(CindyDS list,double time){
     if (list.end!=null) {
       numSpheres = list.length();
@@ -534,7 +532,7 @@ class World{
   }
 
 
-
+// helper method for updateSphere(), draw captured ships
   public void updateCapturedShips(double time){
     numSpheres = capturedShips.length();
     if (numSpheres > 0) {
@@ -559,7 +557,7 @@ class World{
 
   }
 
-
+// update all entities
   public void updateSpheres(double time){
 
     updateList(asteroids,time);
@@ -581,10 +579,11 @@ class World{
 
   }
 
+// update key for myShip
   public void updateKey(char charKeyPressed){
     this.charKeyPressed = charKeyPressed;
   }
-
+// create a new planet, to be called by KeepPlanetComing thread
   public void renewPlanet(){
     planet = new Planet();
     Ship freeShip = new Ship(planet.position);
@@ -592,7 +591,7 @@ class World{
     freeShips.append(freeShip);
 
   }
-
+// create a new asteroid, to be called by KeepAsteroidsComing
   public void addAsteroid(){
     Asteroid ast = new Asteroid();
 
@@ -601,6 +600,7 @@ class World{
 
   }
 
+// craete bullets when myShip shoot
   public void shoot(){
     if (charKeyPressed == 'j'){
       Bullet newBullet = new Bullet(myShip.position.x, myShip.position.y, myShip.angle);
@@ -611,6 +611,7 @@ class World{
 
   }
 
+// caputre freeShip when myShip overlaps with it
   public void capture(){
     numSpheres = freeShips.length();
     if (numSpheres > 0) {
@@ -638,6 +639,7 @@ class World{
 
   }
 
+// check collision among bullets, debris, asteroids and ships
   public void checkCollision(){
     numAsteroids = asteroids.length();
     ArrayList<Integer> gonnaCollideAst = new ArrayList<Integer>();
@@ -795,6 +797,9 @@ class World{
 
 
   }// end of checkCollision
+
+
+  // helper method for checkCollision
   public int[] magicSort(ArrayList<Integer> temAL){
     // temAL -> set -> temAL1 -> temA
     Set<Integer> set = new HashSet<Integer>();
@@ -839,7 +844,6 @@ public class CindySpace extends JPanel implements KeyListener{
   char charKeyPressed;
   Random rand = new Random();
 
-  class Runner implements Runnable {
     public void run()
     {
       while(true){
