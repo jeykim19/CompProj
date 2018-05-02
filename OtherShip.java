@@ -12,16 +12,16 @@ import java.util.ArrayList;
 public class OtherShip extends Spaceship{
     boolean hasBeenCaptured = false;
     public MyShip motherShip;
-    public static LinkedDS<OtherShip> freeShips;
-    public static LinkedDS<OtherShip> capturedShips;
+    public static LinkedDS<OtherShip> freeShips = new LinkedDS<OtherShip>();
+    public static LinkedDS<OtherShip> capturedShips = new LinkedDS<OtherShip>();
     //GradientPaint blueFade;
 
     public OtherShip(Pair[] vertices, MyShip motherShip){
         super(vertices);
         //freeShips.append(this);
         this.motherShip = motherShip;
-        freeShips = new LinkedDS<OtherShip>();
-        capturedShips = new LinkedDS<OtherShip>();
+        //freeShips = new LinkedDS<OtherShip>();
+        //capturedShips = new LinkedDS<OtherShip>();
         freeShips.append(this);
         //fade = new GradientPaint(0, 0, new Color(0, 0, 255), 0, (int)verticalHeight, new Color(0, 0, 50));
         setGradient();
@@ -44,19 +44,29 @@ public class OtherShip extends Spaceship{
     public void captured(){
         hasBeenCaptured = true;
         //parentShip = captor;
+        //System.out.println(capturedShips.length());
         capturedShips.append(this);
+        //System.out.println(capturedShips.length());
         freeShips.remove(this);
         //Something is SERIOUSLY wrong if the length of captured ships is not positive at this point
+
+        ///System.out.println(freeShips.length());
         if(capturedShips.length() == 1){
+            //System.out.println(capturedShips.length());
             attach(motherShip);
         }
         else{
-            attach(capturedShips.end.element);
+            //System.out.println(capturedShips.length());
+            attach((Spaceship)capturedShips.end.previous.element); //EDITED FROM DS
         }
+
+
     }
 
 
     public void attach(Spaceship leader){
+        setCentroid();
+        leader.setCentroid();
         List<Pair> verticesList = findVertices(leader.spaceship);
         Pair[] vertices = new Pair[verticesList.size()];
         Pair translation = new Pair(leader.getCentroid().x - leader.getFront().x, leader.getCentroid().y - leader.getFront().y);
@@ -69,10 +79,10 @@ public class OtherShip extends Spaceship{
         if(!hasBeenCaptured){
             return null;
         }
-        if(capturedShips.length() == 1){
+        if(this == capturedShips.start.element){
             return motherShip;
         }
-        return capturedShips.get(this).parent.element;
+        return (Spaceship)capturedShips.get(this).previous.element; //EDITED FROM DS
     }
 
    @Override
@@ -133,18 +143,25 @@ public class OtherShip extends Spaceship{
 
        AffineTransform transformation = new AffineTransform();
        //theta = theta*Math.PI/180;
-       double rotationAngle = 15;
+       double rotationAngle = 300;
 
        boolean crossProd = crossProduct(parentFront, parentCentroid, childCentroid);
        double theta = theta(parentFront, parentCentroid, childCentroid);
        theta = theta*180/Math.PI;
 
+       if(theta > 175 && theta < 185){
+           return;
+       }
+
        if(crossProd){
+           //System.out.println("crossProd");
            transformation.rotate((rotationAngle/theta)*time, parentCentroid.x, parentCentroid.y);
        }
        if(!crossProd) {
-           transformation.rotate(-(rotationAngle / theta) * time, parentCentroid.x, parentCentroid.y);
+           //System.out.println("noCrossProd");
+           transformation.rotate(-(rotationAngle) * time, parentCentroid.x, parentCentroid.y);
        }
+       spaceship.transform(transformation);
    }
 
    public boolean crossProduct(Pair a, Pair b, Pair c){
