@@ -3,6 +3,10 @@ import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import javax.swing.JLabel;               //added
+import javax.swing.*;             //added
+import java.awt.event.*;            //added
+import javax.swing.JOptionPane;
 
 import java.awt.Dimension;
 import java.awt.Polygon;
@@ -81,6 +85,8 @@ class Ship extends Sphere{
 
   public Ship(){
     super();
+    updateShape();
+
   }
   public void rotateShape(){
     AffineTransform at = AffineTransform.getRotateInstance(angle,position.x,position.y);
@@ -139,6 +145,9 @@ class MyShip extends Ship{
 
     // the postion of a sphere is its center
     position = new Pair(0.5*width + margin, height+margin-30.0);
+
+    updateShape();
+
   }
 
   public void update(World w, double time, char charKeyPressed){
@@ -464,6 +473,8 @@ class World{
   int width;
   int margin;
   int diff;
+  int lifeCount = 5;     //jk
+
 
   int numAsteroids;
   int numBullets;
@@ -698,6 +709,7 @@ class World{
           capturedShips.append(iNode.client);
           freeShips.remove(i);
           System.out.println("catch");
+          lifeCount += 1;
 
         }
         iNode = iNode.previous;
@@ -817,6 +829,24 @@ class World{
           }//end of inside ship loop
         }//end of ship condition
 
+        Area iArea = new Area(iAst.myShape);
+
+        Area myArea = new Area(myShip.myShape);
+        iArea.intersect(myArea);
+        if (!iArea.isEmpty()) {
+
+          myShip = new MyShip(width, height, margin, diff);
+          lifeCount -= 1;
+
+          gonnaCollideAst.add(i);
+          // for (int j = 0; j < 5 ;j ++ ) {
+          //   Debris ijDebris = new Debris(myShip.position.x,myShip.position.y);
+          //   allDebris.append(ijDebris);
+          // }
+        }//end of myShip condition
+
+
+
         iNode = iNode.previous;
       }//end of outseid asteroid loop
     }//end of outside asterooid codition
@@ -860,10 +890,10 @@ class World{
       //
       System.out.println("removed" + index);
 
-      for (int j = 0; j < 5 ;j ++ ) {
-        Debris ijDebris = new Debris(iShip.position.x,iShip.position.y);
-        allDebris.append(ijDebris);
-      }
+      // for (int j = 0; j < 5 ;j ++ ) {
+      //   Debris ijDebris = new Debris(iShip.position.x,iShip.position.y);
+      //   allDebris.append(ijDebris);
+      // }
     }//end of removing ship loop
 
 
@@ -908,22 +938,31 @@ public class CindySpace extends JPanel implements KeyListener{
   public static final int MARGIN = 100;
   public static final int FPS = 60;
   public int diff = 1;
+  public static boolean paused=false;
+  double diffThreshold = 998;
+
   World world;
   char charKeyPressed;
+  Random rand = new Random();
+
   class Runner implements Runnable {
     public void run()
     {
       while(true){
+        if(paused== false){
+          world.updateSpheres(1.0 / (double)FPS);
+          world.updateKey(charKeyPressed);
+          world.shoot();
+          world.capture();
+
+          // System.out.println(world.removingAst);
+          world.checkCollision();
+          incDiff();
+
+          charKeyPressed = 'n';
+        }
         // world.updateGravity(charKeyPressed);
-        world.updateSpheres(1.0 / (double)FPS);
-        world.updateKey(charKeyPressed);
-        world.shoot();
-        world.capture();
 
-        // System.out.println(world.removingAst);
-        world.checkCollision();
-
-        charKeyPressed = 'n';
         repaint();
         try{
           Thread.sleep(1000/FPS);
@@ -933,6 +972,13 @@ public class CindySpace extends JPanel implements KeyListener{
 
       }
 
+public void incDiff(){
+  double dart = 1000 * rand.nextDouble();
+  if (dart > diffThreshold) {
+    diff += 1;
+    diffThreshold -= 1;
+  }
+}
       // Timer timer = new Timer();
       // timer.schedule(world.renewPlanet(),0,10000/diff);
 
@@ -942,7 +988,10 @@ public class CindySpace extends JPanel implements KeyListener{
       public void run()
       {
         while(true){
+          if(paused== false){
+
           world.renewPlanet();
+        }
           try{
             Thread.sleep(30000/diff);
           }
@@ -957,10 +1006,13 @@ public class CindySpace extends JPanel implements KeyListener{
       {
 
         while(true){
+          if(paused== false){
+
           if (world.removingAst != true) {
             world.addAsteroid();
 
           }
+        }
 
 
           try{
@@ -972,6 +1024,7 @@ public class CindySpace extends JPanel implements KeyListener{
         }
       }
     }
+
 
 
 
@@ -1009,12 +1062,63 @@ public class CindySpace extends JPanel implements KeyListener{
     }
 
     public static void main(String[] args){
-      JFrame frame = new JFrame("Physics!!!");
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	JFrame frame = new JFrame("Space Adventure");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+      String text="Welcome to Space Adventures! Your goal is to rescue the ships on the planets without getting hit by asteroids.You move using w,a,s,d and can shoot the asteroids using j. You are given 5 lives initially but rescuing the other ships on nearby planets will give back 1 life. If you don't rescue them, you will lose a life. When your life counter reaches 0, it's game over. Careful: The asteroids will turn into debris when they are hit/hit each other and while they CANNOT damage you, they CAN serve as distraction. Be viligant and good luck!"; //jk
+
+      JTextArea textArea=new JTextArea(text);            //jk
+      textArea.setColumns(50);                     //jk
+      textArea.setLineWrap(true);               //jk
+      textArea.setWrapStyleWord(true);          //jk
+      textArea.setSize(textArea.getPreferredSize().width,1);      //jk
+
+      JOptionPane.showMessageDialog(frame, textArea);     //jk
+
+      int exit=JOptionPane.showConfirmDialog(null, "Would you like to play?", null,JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);           //jk
+
+      if (exit!=JOptionPane.YES_OPTION){        //jk
+      	  System.exit(1);          //jk
+      }                 //jk
+
       CindySpace mainInstance = new CindySpace();
       frame.setContentPane(mainInstance);
       frame.pack();
       frame.setVisible(true);
+      JPanel p=new JPanel();                               //jk
+
+      JButton pauseButton=new JButton("Pause");           //jk
+      JButton unpauseButton=new JButton("Resume");      //jk
+      JButton exitButton=new JButton("Exit");            //jk
+
+      //everything from here
+
+      exitButton.addActionListener(new ActionListener(){
+	      public void actionPerformed(ActionEvent e){
+		  System.exit(1);
+	      }
+	  });
+
+
+       pauseButton.addActionListener(new ActionListener(){
+	      public void actionPerformed(ActionEvent e){
+		  paused=true;
+	      }
+	      });
+       unpauseButton.addActionListener(new ActionListener(){
+	       public void actionPerformed(ActionEvent e){
+		   paused=false;
+		   notify();
+	       }
+	   });
+
+
+      p.add(pauseButton);
+      p.add(exitButton);
+      p.add(unpauseButton);
+      frame.add(p);
+
     }
 
 
@@ -1027,12 +1131,18 @@ public class CindySpace extends JPanel implements KeyListener{
 
       world.drawSpheres(g2D);
 
-      // g2D.setColor(Color.blue);
-      // g2D.fillRect(0,0,WIDTH + 2*MARGIN,MARGIN);
-      // g2D.fillRect(0,0,MARGIN,HEIGHT + 2*MARGIN);
-      // g2D.fillRect(WIDTH + MARGIN,0,MARGIN,HEIGHT + 2*MARGIN);
-      // g2D.fillRect(0,HEIGHT + MARGIN,WIDTH + 2*MARGIN,MARGIN);
+      g2D.setColor(Color.blue);
+      g2D.fillRect(0,0,WIDTH + 2*MARGIN,MARGIN);
+      g2D.fillRect(0,0,MARGIN,HEIGHT + 2*MARGIN);
+      g2D.fillRect(WIDTH + MARGIN,0,MARGIN,HEIGHT + 2*MARGIN);
+      g2D.fillRect(0,HEIGHT + MARGIN,WIDTH + 2*MARGIN,MARGIN);
 
+      g2D.setColor(Color.WHITE);           //starting here
+            g2D.drawString("Lives: "+ String.valueOf(world.lifeCount), 50,50);
+            if (world.lifeCount==0){
+      	      JOptionPane.showMessageDialog(null, "You don't have any more lives. You lose!");
+      	      System.exit(1);
+      	  }
     }
 
 
