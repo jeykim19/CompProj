@@ -435,6 +435,8 @@ class Planet extends Sphere{
     position = new Pair(rand.nextDouble()*width + margin, -70.0);
 
     velocity = new Pair(0.0, (double)diff*50);
+
+    updateShape();
   }
   public void drawShape(Graphics2D g2D){
 
@@ -466,13 +468,14 @@ class World{
   int numAsteroids;
   int numBullets;
   int numSpheres;
-  CindyDS<Asteroid> asteroids = new CindyDS<Asteroid>();
+  int numShips;
+  CindyDS<Sphere> asteroids = new CindyDS<Sphere>();
   Planet planet;
   MyShip myShip;
   char charKeyPressed;
   Boolean removingAst = false;
-  CindyDS<Debris> allDebris= new CindyDS<Debris>();
-  CindyDS<Bullet> bullets = new CindyDS<Bullet>();
+  CindyDS<Sphere> allDebris= new CindyDS<Sphere>();
+  CindyDS<Sphere> bullets = new CindyDS<Sphere>();
   CindyDS<Sphere> freeShips = new CindyDS<Sphere>();
   CindyDS<Sphere> capturedShips = new CindyDS<Sphere>();
 
@@ -527,7 +530,7 @@ class World{
       for (int i = 0; i < numSpheres; i ++){
         Sphere iClient = iNode.client;
 
-        System.out.println("gonna draw");
+        // System.out.println("gonna draw");
         // System.out.println(i +""+numSpheres);
         // System.out.println(iAst.position.x);
 
@@ -623,7 +626,7 @@ class World{
     }
 
     myShip.update(this,time,charKeyPressed);
-    System.out.println("updateSpheres" + myShip.position.x + " " + myShip.position.y);
+    // System.out.println("updateSpheres" + myShip.position.x + " " + myShip.position.y);
 
 
     // for (int i = 0; i < numAsteroids; i ++){
@@ -676,57 +679,60 @@ class World{
 
   public void capture(){
     numSpheres = freeShips.length();
-if (numSpheres > 0) {
-  Node<Sphere> iNode = freeShips.end;
+    if (numSpheres > 0) {
+      Node<Sphere> iNode = freeShips.end;
 
-  for (int i = 0; i < numSpheres; i ++ ) {
-    int iIndex = numSpheres- 1 -i ;
-    System.out.println(iIndex + " " + numSpheres);
+      for (int i = numSpheres - 1; i > -1; i -- ) {
+        // int i = numSpheres- 1 -i ;
+        System.out.println(i + " " + numSpheres);
 
 
-    Sphere iClient = iNode.client;
-    // System.out.println(iClient.position.x + " " + iClient.position.y);
+        Sphere iClient = iNode.client;
+        // System.out.println(iClient.position.x + " " + iClient.position.y);
 
-    Area myArea = new Area(myShip.myShape);
+        Area myArea = new Area(myShip.myShape);
 
-    Area iArea = new Area(iClient.myShape);
-    myArea.intersect(iArea);
-    if (!myArea.isEmpty()) {
-      capturedShips.append(iNode.client);
-      freeShips.remove(iIndex);
-      System.out.println("catch");
+        Area iArea = new Area(iClient.myShape);
+        myArea.intersect(iArea);
+        if (!myArea.isEmpty()) {
+          capturedShips.append(iNode.client);
+          freeShips.remove(i);
+          System.out.println("catch");
 
+        }
+        iNode = iNode.previous;
+      }
     }
-    iNode = iNode.previous;
-  }
-}
 
   }
 
   public void checkCollision(){
     numAsteroids = asteroids.length();
-    ArrayList<Integer> gonnaCollide = new ArrayList<Integer>();
+    ArrayList<Integer> gonnaCollideAst = new ArrayList<Integer>();
+    ArrayList<Integer> gonnaCollideShip = new ArrayList<Integer>();
 
-    if (numAsteroids > 2) {
+    if(numAsteroids > 2) {
+
 
       // Don't start with the end because the end might have been just added withouut its shpaed being updated
-      Node<Asteroid> iNode = asteroids.end.previous;
-      for (int i = 1; i < numAsteroids; i ++){
-        int iIndex = numAsteroids - 1 -i ;
+      Node<Sphere> iNode = asteroids.end;
+      for (int i = numAsteroids - 1; i > -1; i --){
+        // int i = numAsteroids - i ;
 
-        Asteroid iAst = iNode.client;
+        Sphere iAst = iNode.client;
 
 
         // System.out.println(iAst.position.x);
         // System.out.println(iAst.myShape);
 
 
-        Node<Asteroid> jNode = asteroids.end.previous;
+        Node<Sphere> jNode = iNode.previous;
+        // Node<Sphere> jNode = asteroids.end.previous;
 
-        for (int j = 1; j < numAsteroids; j ++){
-          int jIndex = numAsteroids - 1 -j ;
+        for (int j = i -1; j > -1; j --){
+          // int j = numAsteroids - 1 -j ;
 
-          Asteroid jAst = jNode.client;
+          Sphere jAst = jNode.client;
 
           // keep iArea inside the inner loop so it's updated as the inner loop run
           Area iArea = new Area(iAst.myShape);
@@ -734,97 +740,167 @@ if (numSpheres > 0) {
           Area jArea = new Area(jAst.myShape);
           iArea.intersect(jArea);
           // System.out.println(iArea.isEmpty() + " "+ (iArea.equals(jArea)) );
-          // System.out.println(numAsteroids + " " + iIndex + " " + jIndex);
           // we want A is false and B is false, which is equivalent to A or B is not true
           if (!((iArea.equals(jArea))|| (iArea.isEmpty()) )) {
             // System.out.println("gonna collide");
+            // System.out.println(numAsteroids + " " + i + " " + j);
 
-            gonnaCollide.add(iIndex);
-            gonnaCollide.add(jIndex);
+            gonnaCollideAst.add(i);
+            gonnaCollideAst.add(j);
 
           }
 
           jNode = jNode.previous;
 
-        }
+        }//end of inside asteorid loop
 
         numBullets = bullets.length();
-        Node<Bullet> kNode = bullets.end;
+        Node<Sphere> kNode = bullets.end;
 
-        if ((numBullets > 1)&&(bullets.end!=null)) {
+        if (numBullets > 0) {
 
-          for (int k = 1; k < numBullets; k ++){
-            int kIndex = numBullets - 1 -k ;
+          for (int k = numBullets - 1; k > -1; k --){
+            // int k = numBullets -k ;
 
-            Asteroid kAst = kNode.client;
+            Sphere kBul = kNode.client;
 
             // keep iArea inside the inner loop so it's updated as the inner loop run
             Area iArea = new Area(iAst.myShape);
 
-            Area kArea = new Area(kAst.myShape);
+            Area kArea = new Area(kBul.myShape);
             iArea.intersect(kArea);
             // System.out.println(iArea.isEmpty() + " "+ (iArea.equals(kArea)) );
-            // System.out.println(numAsteroids + " " + iIndex + " " + kIndex);
+            // System.out.println(numAsteroids + " " + i + " " + k);
             // we want A is false and B is false, which is equivalent to A or B is not true
-            if (!((iArea.equals(kArea))|| (iArea.isEmpty()) )) {
-              // System.out.println("gonna collide");
+            if (!iArea.isEmpty()) {
+              System.out.println(numAsteroids + " " + i + " " + k);
 
-              gonnaCollide.add(iIndex);
+              System.out.println("gonna collide");
+
+              gonnaCollideAst.add(i);
             }
+
             kNode = kNode.previous;
 
-          }
+          }//end of inside bulllet loop
+        }//end of bullet condition
 
-        }
+        numShips = capturedShips.length();
+        Node<Sphere> lNode = capturedShips.end;
 
+        if (numShips > 0) {
+
+          for (int l = numShips - 1; l > -1; l --){
+            // int l = numShips - 1 - l ;
+            System.out.println("ship" + numShips + " " + i + " " + l);
+
+            Sphere lShip = lNode.client;
+
+            // keep iArea inside the inner loop so it's updated as the inner loop run
+            Area iArea = new Area(iAst.myShape);
+
+            Area lArea = new Area(lShip.myShape);
+            iArea.intersect(lArea);
+            // System.out.println(iArea.isEmpty() + " "+ (iArea.equals(kArea)) );
+            // we want A is false and B is false, which is equivalent to A or B is not true
+            if (!iArea.isEmpty()) {
+
+              System.out.println(numAsteroids + " " + i + " " + l);
+
+              System.out.println("gonna collide");
+              gonnaCollideShip.add(l);
+
+              gonnaCollideAst.add(i);
+            }
+            lNode = lNode.previous;
+
+          }//end of inside ship loop
+        }//end of ship condition
 
         iNode = iNode.previous;
-      }
-    }
-    Set<Integer> set = new HashSet<Integer>();
+      }//end of outseid asteroid loop
+    }//end of outside asterooid codition
 
-    for (int i =  0; i < gonnaCollide.size() ; i ++ ) {
-      set.add(gonnaCollide.get(i));
 
-    }
 
-    ArrayList<Integer> gonnaCollide1 = new ArrayList<Integer>();
-    Iterator<Integer> it = set.iterator();
-    while(it.hasNext()) {
-      int next = it.next();
-      gonnaCollide1.add(next);
-    }
 
-    int[] gonnaCollide2 = new int[gonnaCollide1.size()];
-    for (int i =  0; i < gonnaCollide2.length ; i ++ ) {
-      gonnaCollide2[i] = gonnaCollide1.get(i).intValue();
-    }
-    Arrays.sort(gonnaCollide2);
 
-    for (int i =  0; i < gonnaCollide2.length ; i ++ ) {
-      int index = gonnaCollide2[gonnaCollide2.length - 1 - i];
-      Asteroid iAsteroid = asteroids.get(index);
+    // int[] gonnaCollideAst1 = new int[gonnaCollideAst.size()];
+    int[] gonnaCollideAst1 = magicSort(gonnaCollideAst);
+
+    for (int i =  0; i < gonnaCollideAst1.length ; i ++ ) {
+      int index = gonnaCollideAst1[gonnaCollideAst1.length - 1 - i];
+      Sphere iAsteroid = asteroids.get(index);
 
       asteroids.remove(index);
-      // System.out.println(gonnaCollide.toString());
-      // System.out.println(gonnaCollide1.toString());
-      // System.out.println(Arrays.toString(gonnaCollide2));
+      // System.out.println(gonnaCollideAst.toString());
+      // System.out.println(gonnaCollideAst1.toString());
+      // System.out.println(Arrays.toString(gonnaCollideAst1));
       //
-      // System.out.println("removed" + index);
+      System.out.println("removed" + index);
 
       for (int j = 0; j < 5 ;j ++ ) {
         Debris ijDebris = new Debris(iAsteroid.position.x,iAsteroid.position.y);
         allDebris.append(ijDebris);
       }
+    }//end of removing asteroid loop
+
+
+    // int[] gonnaCollideShip1 = new int[gonnaCollideShip.size()];
+    int[] gonnaCollideShip1 = magicSort(gonnaCollideShip);
+
+    for (int i =  0; i < gonnaCollideShip1.length ; i ++ ) {
+      int index = gonnaCollideShip1[gonnaCollideShip1.length - 1 - i];
+      Sphere iShip = capturedShips.get(index);
+
+      capturedShips.remove(index);
+      // System.out.println(gonnaCollideShip.toString());
+      System.out.println(gonnaCollideShip1.toString());
+      // System.out.println(Arrays.toString(gonnaCollideShip1));
+      //
+      System.out.println("removed" + index);
+
+      for (int j = 0; j < 5 ;j ++ ) {
+        Debris ijDebris = new Debris(iShip.position.x,iShip.position.y);
+        allDebris.append(ijDebris);
+      }
+    }//end of removing ship loop
+
+
+
+
+
+  }// end of checkCollision
+  public int[] magicSort(ArrayList<Integer> temAL){
+    // temAL -> set -> temAL1 -> temA
+    Set<Integer> set = new HashSet<Integer>();
+
+    for (int i =  0; i < temAL.size() ; i ++ ) {
+      set.add(temAL.get(i));
 
     }
 
+    ArrayList<Integer> temAL1 = new ArrayList<Integer>();
+    Iterator<Integer> it = set.iterator();
+    while(it.hasNext()) {
+      int next = it.next();
+      temAL1.add(next);
+    }
 
+    int[] temA = new int[temAL1.size()];
+    for (int i =  0; i < temA.length ; i ++ ) {
+      temA[i] = temAL1.get(i).intValue();
+    }
+    Arrays.sort(temA);
+    return temA;
 
   }
 
 
-}
+
+
+
+}// end of world
 
 public class CindySpace extends JPanel implements KeyListener{
   public static final int WIDTH = 1024 ;
