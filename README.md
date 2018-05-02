@@ -1,2 +1,5 @@
-# CompProj
-Comp Sci Final Project
+# Space Adventures
+Welcome to Space Adventures! Your goal is to survive in the space. You have some reserve on you ship, which sum to five lives. Eventually, you will run out of them if you don't earn some and you will die. Even worse, every time you get hit by floating asteroids , you lose a life point too. HAHAHA. So, how do you earn resources? There are planets passing by with abandoned ships landed on it. Hover over the free ship, it will follow you, and then you earn a life point. Move by pressing w,a,s,d. However, if your captured ship is hit by an asteroid, you lose that life point you have earned. Anything you can do with the asteroids? You can shoot at them by pressing j. Want to shoot in another direction? Press e to rotate clockwise and q to rotate counterclockwise. Pay attention to the life counter. When your life counter reaches 0, it's game over. Careful: The asteroids will turn into debris when they are hit/hit each other and while they CANNOT damage you, they CAN serve as distraction. Be vigilant and good luck!"
+
+javac *.java
+java Space
