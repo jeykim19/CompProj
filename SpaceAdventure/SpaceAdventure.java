@@ -779,7 +779,7 @@ public class SpaceAdventure extends JPanel implements KeyListener{
 
   World world;
   Random rand = new Random();
-  int i=0;
+  int i=0;   //variable checks whether bullet button is pressed already or not.
   boolean key1=false;
   boolean key2=false;
   boolean key3=false;
