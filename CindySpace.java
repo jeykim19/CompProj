@@ -83,8 +83,10 @@ class Ship extends Sphere{
 
   }
 
-  public Ship(){
+  public Ship(Pair planetPosition){
     super();
+    position = planetPosition;
+
     updateShape();
 
   }
@@ -146,7 +148,7 @@ class MyShip extends Ship{
     // the postion of a sphere is its center
     position = new Pair(0.5*width + margin, height+margin-30.0);
 
-    updateShape();
+    // updateShape();
 
   }
 
@@ -583,6 +585,38 @@ class World{
     }
   }
 
+  public void updateList(CindyDS list,double time, boolean die){
+    if (list.end!=null) {
+      numSpheres = list.length();
+      Node<Sphere> iNode = list.end;
+      for (int i = 0; i < numSpheres; i ++){
+        Sphere iClient = iNode.client;
+
+        // System.out.println("gonna update");
+        // System.out.println(i +""+numSpheres);
+        // System.out.println(iAst.position.x);
+
+
+        iClient.update(this,time);
+        // iNode.client.updateShape();
+        if (die == true) {
+          if (iClient.checkDeath()) {
+            int index = numSpheres - 1 -i ;
+            removingAst = true;
+            list.remove(index);
+            removingAst = false;
+
+
+          }
+
+        }
+
+
+        iNode = iNode.previous;
+      }
+    }
+  }
+
   public void updateCapturedShips(double time){
     numSpheres = capturedShips.length();
     if (numSpheres > 0) {
@@ -596,7 +630,7 @@ class World{
         System.out.println("captured");
         System.out.println(i +""+numSpheres);
         // System.out.println(iAst.position.x);
-        iClient.position = myShip.position.add(new Pair(myShip.radius*(i+1)*6,0.0));
+        iClient.position = myShip.position.add(new Pair(0.0,myShip.radius*(i+1)*2));
         System.out.println(iClient.position.x + " " + iClient.position.y);
         System.out.println(myShip.position.x + " " + myShip.position.y);
 
@@ -623,7 +657,7 @@ class World{
     updateList(asteroids,time);
     updateList(allDebris,time);
     updateList(bullets,time);
-    updateList(freeShips,time);
+    updateList(freeShips,time, false);
     updateCapturedShips(time);
 
     if (planet != null) {
@@ -662,8 +696,8 @@ class World{
 
   public void renewPlanet(){
     planet = new Planet();
-    Ship freeShip = new Ship();
-    freeShip.position = planet.position;
+    Ship freeShip = new Ship(planet.position);
+    // freeShip.position = planet.position;
     freeShip.velocity = planet.velocity;
     freeShips.append(freeShip);
 
@@ -699,7 +733,7 @@ class World{
 
 
         Sphere iClient = iNode.client;
-        // System.out.println(iClient.position.x + " " + iClient.position.y);
+        System.out.println("freeShip"+ iClient.position.x + " " + iClient.position.y);
 
         Area myArea = new Area(myShip.myShape);
 
@@ -993,7 +1027,7 @@ public void incDiff(){
           world.renewPlanet();
         }
           try{
-            Thread.sleep(30000/diff);
+            Thread.sleep(30000 + (long)(5000*rand.nextDouble()));
           }
           catch(InterruptedException e){
           }
@@ -1016,7 +1050,7 @@ public void incDiff(){
 
 
           try{
-            Thread.sleep(500/diff);
+            Thread.sleep(500 + (long)(100*rand.nextDouble()));
 
           }
           catch(InterruptedException e){
