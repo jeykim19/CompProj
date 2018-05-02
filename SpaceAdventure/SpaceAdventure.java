@@ -802,6 +802,7 @@ class Runner implements Runnable {
             JOptionPane.showMessageDialog(null, "You don't have any more lives. You lose!");
             System.exit(0);
           }
+
         }
 
         repaint();
@@ -1042,7 +1043,7 @@ class Runner implements Runnable {
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-      String text="Welcome to Space Adventure! Your goal is to rescue the ships on the planets without getting hit by asteroids.You move using w,a,s,d, rotate with q and e, and can shoot the asteroids using j. You are given 5 lives initially but rescuing the other ships on nearby planets will give back 1 life. If you don't rescue them, you will lose a life. When your life counter reaches 0, it's game over. Careful: The asteroids will turn into debris when they are hit/hit each other and while they CANNOT damage you, they CAN serve as distraction. Be viligant and good luck!";
+      String text="Welcome to Space Adventure! Your goal is to rescue the ships on the planets without getting hit by asteroids.You move using w,a,s,d, rotate with q and e, and can shoot the asteroids using j. You are given 5 lives initially but rescuing the other ships on nearby planets will give back 1 life. If you or the trailing ships are hit, you will lose a life. When your life counter reaches 0, it's game over. Careful: The asteroids will turn into debris when they are hit/hit each other and while they CANNOT damage you, they CAN serve as distraction. Be viligant and good luck!";
 
       JTextArea textArea=new JTextArea(text);         //https://stackoverflow.com/questions/4330076/joptionpane-showmessagedialog-truncates-jtextarea-message
       textArea.setColumns(50);
