@@ -988,7 +988,7 @@ if ((key4==true)&&(key1==true)&&(key5==true)){
   i=1;
 }
 }
-if ((key4==true)&&(key3==true)&&(key5=true)){
+if ((key4==true)&&(key3==true)&&(key5==true)){
   world.myShip.velocity.x=-200.0;
   world.myShip.velocity.y=200.0;
   if (i!=1){
@@ -997,6 +997,7 @@ if ((key4==true)&&(key3==true)&&(key5=true)){
   i=1;
 }
 } //till here
+
 }
     public void keyReleased(KeyEvent e) {
       char c=e.getKeyChar(); //from here
