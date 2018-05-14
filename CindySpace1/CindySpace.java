@@ -997,7 +997,6 @@ if ((key4==true)&&(key3==true)&&(key5==true)){
   i=1;
 }
 } //till here
-
 }
     public void keyReleased(KeyEvent e) {
       char c=e.getKeyChar(); //from here
